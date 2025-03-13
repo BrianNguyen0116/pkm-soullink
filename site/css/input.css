@@ -1,0 +1,43 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    background-color: var(--v2);
+    border: 1px solid black;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.container button {
+    font: .9em "Arial", sans-serif;
+    font-weight: 500;
+    background: var(--v4);
+}
+
+#inputContainer {
+    display: flex;
+}
+
+.subcontainer {
+    width: 30em;
+    box-sizing: border-box;
+}
+
+#inputContainer p {
+    font: .9em "Arial", sans-serif;
+    color: var(--text);
+}
+
+.code {
+    background: var(--v4);
+    font: 12px "Consolas", sans-serif;
+}
+
+textarea {
+    font: 15px "Arial", sans-serif;
+    background: var(--v4);
+    color: var(--text);
+    width: 700px;
+    resize: vertical;
+}
