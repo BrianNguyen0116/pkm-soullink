@@ -1,4 +1,4 @@
-# Pokemon Soul Link Tool
+# [Pokemon Soul Link Tool](https://briannguyen0116.github.io/pkm-soullink/)
 
 ![Picture of a wooper for dopamine.](https://archives.bulbagarden.net/media/upload/thumb/f/f7/0194Wooper.png/250px-0194Wooper.png)
 
@@ -8,9 +8,7 @@ Have a friend to play pokemon? Must be nice, here's a tool to make your lives ea
 * Valid Team-Combination Generation
 * Pokemon Type Coverage
 
-This is under the assumption that you are following the __no same primary type__ rule and you don't have the time to map out team combinations.
-
-The tool is made using the simplest logic without any external libraries to be used on any device (the logic wouldn't need one anyways).
+This is only useful for you if you're following the __no same primary type__ rule. The tool is made using only basic Javascript without any external libraries to be used on any device (the logic wouldn't need one anyways). You can visit the site [here](https://briannguyen0116.github.io/pkm-soullink/).
 
 ## 📝 Instructions
 
