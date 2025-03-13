@@ -117,14 +117,18 @@ function saveJSON() {
         PC_2: PC_2
     };
     const jsonString = JSON.stringify(updatedJSON, null, 4);
-    
+
     const blob = new Blob([jsonString], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "PC_data.json";
+    a.download = "PC_data.json"; // User will get a default filename
+
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+
+    // Clean up memory
+    URL.revokeObjectURL(a.href);
 }
 
 function applyJSON() {
