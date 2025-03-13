@@ -1,0 +1,35 @@
+@import url("root.css");
+
+.combinations {
+    margin-top: 20px;
+}
+.combination {
+    padding: 10px;
+    border: 4px solid var(--v2);
+    margin: 5px;
+    display: inline-block;
+    color: var(--text);
+    background: var(--v1);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.combination:hover {
+    background: var(--v2);
+}
+
+.table-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.table-container table, th, td {
+    border: 1px solid;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}

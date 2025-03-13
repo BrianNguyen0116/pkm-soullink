@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soul-Link Team Generator</title>
+    <link rel="stylesheet" href="css/decor.css">
+    <link rel="stylesheet" href="css/filter.css">
+    <link rel="stylesheet" href="css/input.css">
+    <link rel="stylesheet" href="css/output.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/modal.css">
+</head>
+
+<body>
+    <div class="container">
+        <div id="inputContainer">
+            <textarea id="jsonInput">
+{
+    "PC_1": [
+        {
+            "name": "Wooper",
+            "type": "Water"
+        }
+    ],
+    "PC_2": [
+        {
+            "name": "Wooper",
+            "type": "Ground"
+        }
+    ]
+}
+            </textarea>
+            <div class="subcontainer">
+                <p>
+                    Each object requires a name and type attribute.
+                    <br><br>
+                    An example is 
+                    <br> 
+                    <span class="code">{"name": "Pika", "type": "Electric"}</span>
+                </p>
+            </div>
+        </div>
+        <button onclick="processInput()">Run</button>
+
+        <div class="editorButtons">
+            <button onclick="saveJSON()">Save as JSON</button>
+            <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="uploadJSON(event)">
+            <button onclick="document.getElementById('jsonFileInput').click()">Upload JSON</button>
+        </div>    
+
+        <div id="errorMessage" class="error"></div>
+    </div>
+    
+    <div class="editor">
+        <div class="editable-list">
+            <h3>PC_1</h3>
+            <div id="pc1List"></div>
+            <button class="row-button" onclick="addRow()">Add Row</button>
+        </div>
+        <div class="editable-list">
+            <h3>PC_2</h3>
+            <div id="pc2List"></div>
+            <button class="row-button" onclick="addRow()">Add Row</button>
+        </div>
+    </div>
+
+    <div class="combinations" id="combinations">
+        <div id="grass"></div>
+    </div>
+
+
+    <div class="overlay" id="overlay"></div>
+    <div class="filter-popup" id="filterPopup">
+        <h3>Select Names to Prioritize:</h3>
+        <div id="filterOptions"></div>
+        <button onclick="applyFilter()">Apply Filter</button>
+        <button onclick="closeFilterPopup()">Cancel</button>
+    </div>
+
+    <div id="customAlert" class="modal-overlay">
+        <div class="modal-box">
+            <p id="modalMessage"></p>
+            <button onclick="closeModalAlert()">OK</button>
+        </div>
+    </div>
+
+</body>
+
+<script src="js/core.js"></script>
+<script src="js/qol.js"></script>
+</html>
