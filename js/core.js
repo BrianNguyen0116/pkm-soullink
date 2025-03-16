@@ -116,10 +116,7 @@ async function saveJSON() {
 }
 
 function applyJSON() {
-    const updatedJSON = {
-        PC: PC,
-    };
-    document.getElementById("jsonInput").value = JSON.stringify(updatedJSON, null, 4);
+    document.getElementById("jsonInput").value = JSON.stringify(PC, null, 4);
 }
 
 
