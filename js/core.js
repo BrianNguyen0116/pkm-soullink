@@ -90,23 +90,29 @@ function uploadJSON(event) {
     reader.readAsText(file);
 }
 
-function saveJSON() {
+async function saveJSON() {
     const updatedJSON = {
         PC: PC,
     };
+
     const jsonString = JSON.stringify(updatedJSON, null, 4);
-
     const blob = new Blob([jsonString], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "PC_data.json"; // User will get a default filename
 
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const handle = await window.showSaveFilePicker({
+        suggestedName: 'soullink-save.json',
+        types: [
+            {
+                description: "JSON",
+                accept: { "application/json": [".json"] },
+            },
+        ],
+    });
 
-    // Clean up memory
-    URL.revokeObjectURL(a.href);
+    const writableStream = await handle.createWritable(opts);
+
+    await writableStream.write(blob);
+
+    await writableStream.close();
 }
 
 function applyJSON() {
