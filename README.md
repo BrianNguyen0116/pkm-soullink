@@ -24,20 +24,16 @@ To use the tool, you need to properly track the pokemon. It isn't too much assum
 Here is what is prepared when you visit the site:
 
 ```
-{
-    "PC_1": [
-        {
-            "name": "Wooper",
-            "type": "Water"
-        }
-    ],
-    "PC_2": [
-        {
-            "name": "Wooper",
-            "type": "Ground"
-        }
-    ]
-}
+[
+    {
+        "nickname": "Cool Guy",
+        "name1": "Wooper",
+        "name2": "Beldum",
+        "type1": "Water",
+        "type2": "Steel",
+        "area": "Route 212"
+    }
+]
 ```
 
 There are two ways to modify your PCs.
