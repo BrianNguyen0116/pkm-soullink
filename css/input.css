@@ -38,6 +38,7 @@ textarea {
     font: 15px "Arial", sans-serif;
     background: var(--v4);
     color: var(--text);
-    width: 700px;
+    height: 150px;
+    width: 100%;
     resize: vertical;
 }

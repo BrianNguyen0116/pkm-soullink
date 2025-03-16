@@ -17,30 +17,33 @@
     <div class="container">
         <div id="inputContainer">
             <textarea id="jsonInput">
-{
-    "PC_1": [
-        {
-            "name": "Wooper",
-            "type": "Water"
-        }
-    ],
-    "PC_2": [
-        {
-            "name": "Wooper",
-            "type": "Ground"
-        }
-    ]
-}
+[
+    {
+        "nickname": "Boy 1",
+        "name1": "Wooper",
+        "name2": "Wooper",
+        "type1": "Water",
+        "type2": "Ground",
+        "area": "Route 212"
+    },
+    {
+        "nickname": "Boy 2",
+        "name1": "Beldum",
+        "name2": "Wooper",
+        "type1": "Steel",
+        "type2": "Psychic",
+        "area": "Route 228"
+    },
+    {
+        "nickname": "Boy 3",
+        "name1": "Swampert",
+        "name2": "Wooper",
+        "type1": "Water",
+        "type2": "Ground",
+        "area": "Route 228"
+    }
+]
             </textarea>
-            <div class="subcontainer">
-                <p>
-                    Each object requires a name and type attribute.
-                    <br><br>
-                    An example is 
-                    <br> 
-                    <span class="code">{"name": "Pika", "type": "Electric"}</span>
-                </p>
-            </div>
         </div>
         <button onclick="processInput()">Run</button>
 
@@ -55,15 +58,11 @@
     
     <div class="editor">
         <div class="editable-list">
-            <h3>PC_1</h3>
-            <div id="pc1List"></div>
+            <h3>PC</h3>
+            <div id="pcList"></div>
             <button class="row-button" onclick="addRow()">Add Row</button>
         </div>
-        <div class="editable-list">
-            <h3>PC_2</h3>
-            <div id="pc2List"></div>
-            <button class="row-button" onclick="addRow()">Add Row</button>
-        </div>
+
     </div>
 
     <div class="combinations" id="combinations">

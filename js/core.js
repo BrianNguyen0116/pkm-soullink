@@ -1,6 +1,5 @@
 let allCombinations = [];
-let PC_1 = [];
-let PC_2 = [];
+let PC = [];
 
 // Massive Poke-dictionary because no-nodejs fun times
 const poketypes = [
@@ -26,9 +25,7 @@ const poketypes = [
 
 window.onload = () => {
     const jsonData = JSON.parse(document.getElementById("jsonInput").value);
-
-    PC_1 = jsonData.PC_1;
-    PC_2 = jsonData.PC_2;
+    PC = jsonData;
 
     displayEditableLists();
 }
@@ -43,23 +40,14 @@ function processInput() {
     try {
         const jsonData = JSON.parse(document.getElementById("jsonInput").value);
 
-        if (!jsonData.PC_1 || !jsonData.PC_2 || !Array.isArray(jsonData.PC_1) || !Array.isArray(jsonData.PC_2)) {
-            throw new Error("JSON must contain 'PC_1' and 'PC_2' as arrays.");
-        }
+        PC = jsonData;
 
-        PC_1 = jsonData.PC_1;
-        PC_2 = jsonData.PC_2;
-
-        if (PC_1.length !== PC_2.length) {
-            throw new Error("'PC_1' and 'PC_2' must have the same number of elements.");
-        }
-
-        for (const obj of [...PC_1, ...PC_2]) {
-            if (!obj.name || !obj.type) {
-                throw new Error("Each object must have 'name' and 'type' attributes.");
+        for (const obj of [...PC]) {
+            if (!obj.name1 || !obj.name2 || !obj.type1 || !obj.type2 || !obj.area) {
+                throw new Error("Each object must have 'name', 'type' and 'area' attributes.");
             }
 
-            if (!poketypes.some(p => p.type === obj.type)) {
+            if (!poketypes.some(p => p.type === obj.type1) || !poketypes.some(p => p.type === obj.type2)) {
                 throw new Error(`Invalid type "${obj.type}" found. Must be one of: ${poketypes.map(p => p.type).join(", ")}`);
             }
         }
@@ -71,13 +59,7 @@ function processInput() {
         return;
     }
 
-    const linkMap = {};
-
-    for (let i = 0; i < PC_1.length; i++) {
-        linkMap[PC_1[i].name] = PC_2.find(obj => obj.name === PC_1[i].name);
-    }
-
-    findValidCombinations(PC_1, linkMap);
+    findValidCombinations(PC);
 }
 
 
@@ -95,9 +77,6 @@ function uploadJSON(event) {
     reader.onload = function(e) {
         try {
             const jsonData = JSON.parse(e.target.result); 
-            if (!jsonData.PC_1 || !jsonData.PC_2 || !Array.isArray(jsonData.PC_1) || !Array.isArray(jsonData.PC_2)) {
-                throw new Error("Invalid JSON format. Must contain 'PC_1' and 'PC_2' as arrays.");
-            }
 
             document.getElementById("jsonInput").value = JSON.stringify(jsonData, null, 4);
 
@@ -113,8 +92,7 @@ function uploadJSON(event) {
 
 function saveJSON() {
     const updatedJSON = {
-        PC_1: PC_1,
-        PC_2: PC_2
+        PC: PC,
     };
     const jsonString = JSON.stringify(updatedJSON, null, 4);
 
@@ -133,8 +111,7 @@ function saveJSON() {
 
 function applyJSON() {
     const updatedJSON = {
-        PC_1: PC_1,
-        PC_2: PC_2
+        PC: PC,
     };
     document.getElementById("jsonInput").value = JSON.stringify(updatedJSON, null, 4);
 }
@@ -144,47 +121,49 @@ function applyJSON() {
         Combination Section
 ============================= */
 
-function findCombinations(index, PC_1, linkMap, chosenPC_1, chosenPC_2, usedAttributes, results) {
-    if (index === PC_1.length) {
-        results.push({ PC_1: [...chosenPC_1], PC_2: [...chosenPC_2] });
+function findValidCombinations(PC) {
+    allCombinations = [];
+    findCombinations(0, PC, [], new Set(), allCombinations);
+    allCombinations = removeSubsets(allCombinations);
+    showFilterPopup();
+}
+
+function findCombinations(index, PC, chosenPC, usedAttributes, results) {
+    if (index === PC.length) {
+        // Push a copy of the chosenPC array if it's not empty
+        if (chosenPC.length > 0) {
+            results.push([...chosenPC]);
+        }
         return;
     }
 
-    const item1 = PC_1[index];
-    const item2 = linkMap[item1.name];
+    const pokemon = PC[index];
+    const item1 = pokemon.type1;
+    const item2 = pokemon.type2;
 
-    if (item2 && !usedAttributes.has(item1.type) && !usedAttributes.has(item2.type)) {
-        chosenPC_1.push(item1);
-        chosenPC_2.push(item2);
-        usedAttributes.add(item1.type);
-        usedAttributes.add(item2.type);
+    if (!usedAttributes.has(item1) && !usedAttributes.has(item2)) {
+        chosenPC.push(pokemon);
+        usedAttributes.add(item1);
+        usedAttributes.add(item2);
 
-        findCombinations(index + 1, PC_1, linkMap, chosenPC_1, chosenPC_2, usedAttributes, results);
+        findCombinations(index + 1, PC, chosenPC, usedAttributes, results);
 
-        chosenPC_1.pop();
-        chosenPC_2.pop();
-        usedAttributes.delete(item1.type);
-        usedAttributes.delete(item2.type);
+        chosenPC.pop();
+        usedAttributes.delete(item1);
+        usedAttributes.delete(item2);
     }
 
-    findCombinations(index + 1, PC_1, linkMap, chosenPC_1, chosenPC_2, usedAttributes, results);
+    findCombinations(index + 1, PC, chosenPC, usedAttributes, results);
 }
 
 function removeSubsets(results) {
     return results.filter((combo, i, allResults) =>
         !allResults.some((otherCombo, j) =>
             j !== i &&
-            combo.PC_1.length < otherCombo.PC_1.length &&
-            combo.PC_1.every(obj => otherCombo.PC_1.some(o => o.name === obj.name))
+            combo.length < otherCombo.length &&
+            combo.every(obj => otherCombo.some(o => o.nickname === obj.nickname))
         )
     );
-}
-
-function findValidCombinations(PC_1, linkMap) {
-    allCombinations = [];
-    findCombinations(0, PC_1, linkMap, [], [], new Set(), allCombinations);
-    allCombinations = removeSubsets(allCombinations);
-    showFilterPopup();
 }
 
 
@@ -202,16 +181,16 @@ function showFilterPopup() {
 
     filterOptions.innerHTML = "";
 
-    const uniqueNames = [...new Set(allCombinations.flatMap(combo => combo.PC_1.map(item => item.name)))];
+    const uniqueNames = [...new Set(allCombinations.flatMap(combo => combo.map(item => item.nickname)))];
 
     const column1 = document.createElement("div");
     column1.classList.add("filter-column");
     const column2 = document.createElement("div");
     column2.classList.add("filter-column");
 
-    uniqueNames.forEach((name, index) => {
+    uniqueNames.forEach((nickname, index) => {
         const label = document.createElement("label");
-        label.innerHTML = `<input type="checkbox" value="${name}"> ${name}`;
+        label.innerHTML = `<input type="checkbox" value="${nickname}"> ${nickname}`;
 
         if (index % 2 === 0) {
             column1.appendChild(label);
@@ -251,7 +230,7 @@ function displayCombinations(selectedNames) {
     combinationsDiv.innerHTML = "<h3>Valid Combinations:</h3>";
 
     const filteredCombinations = allCombinations.filter(combo =>
-        selectedNames.every(name => combo.PC_1.some(item => item.name === name))
+        selectedNames.every(nickname => combo.some(item => item.nickname === nickname))
     );
 
     if (filteredCombinations.length == 0) {
@@ -262,7 +241,7 @@ function displayCombinations(selectedNames) {
             filteredCombinations.forEach(combo => {
             const div = document.createElement("div");
             div.classList.add("combination");
-            div.innerHTML = `${combo.PC_1.map(i => i.name).join(", ")}`;
+            div.innerHTML = `${combo.map(i => i.nickname).join(", ")}`;
             div.onclick = () => showCombinationDetails(combo);
             combinationsDiv.appendChild(div);
         });
@@ -297,68 +276,22 @@ function showCombinationDetails(combo) {
     tablePC2.classList.add("combo-table");
     tablePC2.innerHTML = "<tr><th>PC 2 Name</th><th>Type</th></tr>";
 
-    let pc1StrengthsSet = new Set();
-    let pc1WeaknessesSet = new Set();
-    let pc2StrengthsSet = new Set();
-    let pc2WeaknessesSet = new Set();
-
-    combo.PC_1.forEach((pc1, index) => {
-        const pc2 = combo.PC_2[index];
-
-        const pc1TypeData = poketypes.find(t => t.type === pc1.type);
-        const pc2TypeData = poketypes.find(t => t.type === pc2.type);
-
-        pc1TypeData.strongTo.forEach(type => pc1StrengthsSet.add(type));
-        pc1TypeData.weakTo.forEach(type => pc1WeaknessesSet.add(type));
-
-        pc2TypeData.strongTo.forEach(type => pc2StrengthsSet.add(type));
-        pc2TypeData.weakTo.forEach(type => pc2WeaknessesSet.add(type));
-
+    combo.forEach((poke) => {
         const row1 = document.createElement("tr");
         row1.innerHTML = `
-            <td>${pc1.name}</td>
-            <td>${pc1.type}</td>`;
+            <td>${poke.name1}</td>
+            <td>${poke.type1}</td>`;
         tablePC1.appendChild(row1);
 
         const row2 = document.createElement("tr");
         row2.innerHTML = `
-            <td>${pc2.name}</td>
-            <td>${pc2.type}</td>`;
+            <td>${poke.name2}</td>
+            <td>${poke.type2}</td>`;
         tablePC2.appendChild(row2);
     });
 
     modalContent.appendChild(tablePC1);
     modalContent.appendChild(tablePC2);
-
-    const finalPC1Strengths = new Set(pc1StrengthsSet);
-    const finalPC1Weaknesses = new Set(pc1WeaknessesSet);
-
-    pc1StrengthsSet.forEach(type => {
-        if (pc1WeaknessesSet.has(type)) {
-            finalPC1Strengths.delete(type);
-            finalPC1Weaknesses.delete(type);
-        }
-    });
-
-    const finalPC2Strengths = new Set(pc2StrengthsSet);
-    const finalPC2Weaknesses = new Set(pc2WeaknessesSet);
-
-    pc2StrengthsSet.forEach(type => {
-        if (pc2WeaknessesSet.has(type)) {
-            finalPC2Strengths.delete(type);
-            finalPC2Weaknesses.delete(type);
-        }
-    });
-
-    const coverageSummary = document.getElementById("coverageSummary");
-    coverageSummary.innerHTML = `
-        <h4>PC 1 Coverage</h4>
-        <p><strong>Strengths:</strong> ${Array.from(finalPC1Strengths).join(", ") || "None"}</p>
-        <p><strong>Weaknesses:</strong> ${Array.from(finalPC1Weaknesses).join(", ") || "None"}</p>
-        <h4>PC 2 Coverage</h4>
-        <p><strong>Strengths:</strong> ${Array.from(finalPC2Strengths).join(", ") || "None"}</p>
-        <p><strong>Weaknesses:</strong> ${Array.from(finalPC2Weaknesses).join(", ") || "None"}</p>
-    `;
 
     modal.style.display = "block";
 }
@@ -384,17 +317,11 @@ function closeCombinationModal() {
 ============================= */
 
 function displayEditableLists() {
-    const pc1List = document.getElementById("pc1List");
-    const pc2List = document.getElementById("pc2List");
-    pc1List.innerHTML = "";
-    pc2List.innerHTML = "";
+    const pcList = document.getElementById("pcList");
+    pcList.innerHTML = "";
 
-    PC_1.forEach((item, index) => {
-        pc1List.appendChild(createEditableRow(item, index, "PC_1"));
-    });
-
-    PC_2.forEach((item, index) => {
-        pc2List.appendChild(createEditableRow(item, index, "PC_2"));
+    PC.forEach((item, index) => {
+        pcList.appendChild(createEditableRow(item, index, "PC"));
     });
 }
 
@@ -402,30 +329,58 @@ function createEditableRow(item, index, setName) {
     const div = document.createElement("div");
     div.classList.add("entry");
 
-    const nameInput = document.createElement("input");
-    nameInput.value = item.name;
-    nameInput.oninput = (event) => debouncedUpdateData(index, setName, "name", event.target.value);
+    const nicknameInput = document.createElement("input");
+    nicknameInput.value = item.nickname;
 
-    const typeSelect = document.createElement("select");
+    const nameInput1 = document.createElement("input");
+    nameInput1.value = item.name1;
+
+    const nameInput2 = document.createElement("input");
+    nameInput2.value = item.name2;
+
+    const areaInput = document.createElement("input");
+    areaInput.value = item.area;
+
+    const typeSelect1 = document.createElement("select");
     poketypes.forEach(pokeType => {
         const option = document.createElement("option");
         option.value = pokeType.type;
         option.textContent = pokeType.type;
-        if (pokeType.type === item.type) {
+        if (pokeType.type === item.type1) {
             option.selected = true;
         }
-        typeSelect.appendChild(option);
+        typeSelect1.appendChild(option);
     });
 
-    typeSelect.onchange = (event) => debouncedUpdateData(index, setName, "type", event.target.value);
+    const typeSelect2 = document.createElement("select");
+    poketypes.forEach(pokeType => {
+        const option = document.createElement("option");
+        option.value = pokeType.type;
+        option.textContent = pokeType.type;
+        if (pokeType.type === item.type2) {
+            option.selected = true;
+        }
+        typeSelect2.appendChild(option);
+    });
+
+    nicknameInput.oninput = (event) => debouncedUpdateData(index, setName, "nickname", event.target.value);
+    nameInput1.oninput = (event) => debouncedUpdateData(index, setName, "name1", event.target.value);
+    nameInput2.oninput = (event) => debouncedUpdateData(index, setName, "name2", event.target.value);
+    areaInput.oninput = (event) => debouncedUpdateData(index, setName, "area", event.target.value);
+    typeSelect1.onchange = (event) => debouncedUpdateData(index, setName, "type1", event.target.value);
+    typeSelect2.onchange = (event) => debouncedUpdateData(index, setName, "type2", event.target.value);
 
     const removeBtn = document.createElement("button");
     removeBtn.classList.add("remove-button");
     removeBtn.textContent = "X";
     removeBtn.onclick = () => removeRow(index, setName);
 
-    div.appendChild(nameInput);
-    div.appendChild(typeSelect);
+    div.appendChild(nicknameInput);
+    div.appendChild(areaInput);
+    div.appendChild(nameInput1);
+    div.appendChild(typeSelect1);
+    div.appendChild(nameInput2);
+    div.appendChild(typeSelect2);
     div.appendChild(removeBtn);
 
     return div;
@@ -440,37 +395,22 @@ function debounce(func, timeout = 300){
 }
 
 const debouncedUpdateData = debounce((index, setName, key, value) => {
-    if (setName === "PC_1") {
-        PC_1[index][key] = value;
-        if (key === "name") PC_2[index][key] = value;
-    } else {
-        PC_2[index][key] = value;
-        if (key === "name") PC_1[index][key] = value;
-    }
-
+    PC[index][key] = value;
     displayEditableLists();
     applyJSON();
 }, 300);
 
 function addRow() {
-    const newRow = { name: "", type: poketypes[0].type };
+    const newRow = { nickname: "", name1: "", name2: "", area: "", type: poketypes[0].type };
 
-    PC_1.push(newRow);
-    PC_2.push(newRow);
+    PC.push(newRow);
 
     displayEditableLists();
 }
 
-function removeRow(index, setName) {
-    if (PC_1.length > 1 || PC_2.length > 1) {
-        if (setName === "PC_1") {
-            PC_1.splice(index, 1);
-            PC_2.splice(index, 1); 
-        } else {
-            PC_2.splice(index, 1);
-            PC_1.splice(index, 1);
-        }
-
+function removeRow(index) {
+    if (PC.length > 1) {
+        PC.splice(index, 1);
         displayEditableLists();
     } else {
         showModalAlert("You must have at least one row.");
