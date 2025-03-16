@@ -332,20 +332,22 @@ function displayEditableLists() {
 }
 
 function createEditableRow(item, index, setName) {
-    const div = document.createElement("div");
-    div.classList.add("entry");
 
     const nicknameInput = document.createElement("input");
     nicknameInput.value = item.nickname;
+    nicknameInput.classList.add("nickname-input");
 
     const nameInput1 = document.createElement("input");
     nameInput1.value = item.name1;
+    nameInput1.classList.add("name-input");
 
     const nameInput2 = document.createElement("input");
     nameInput2.value = item.name2;
+    nameInput2.classList.add("name-input");
 
     const areaInput = document.createElement("input");
     areaInput.value = item.area;
+    areaInput.classList.add("area-input");
 
     const typeSelect1 = document.createElement("select");
     poketypes.forEach(pokeType => {
@@ -357,6 +359,7 @@ function createEditableRow(item, index, setName) {
         }
         typeSelect1.appendChild(option);
     });
+    typeSelect1.classList.add("type-input");
 
     const typeSelect2 = document.createElement("select");
     poketypes.forEach(pokeType => {
@@ -368,6 +371,7 @@ function createEditableRow(item, index, setName) {
         }
         typeSelect2.appendChild(option);
     });
+    typeSelect2.classList.add("type-input");
 
     nicknameInput.oninput = (event) => debouncedUpdateData(index, setName, "nickname", event.target.value);
     nameInput1.oninput = (event) => debouncedUpdateData(index, setName, "name1", event.target.value);
@@ -381,12 +385,30 @@ function createEditableRow(item, index, setName) {
     removeBtn.textContent = "X";
     removeBtn.onclick = () => removeRow(index, setName);
 
-    div.appendChild(nicknameInput);
-    div.appendChild(areaInput);
-    div.appendChild(nameInput1);
-    div.appendChild(typeSelect1);
-    div.appendChild(nameInput2);
-    div.appendChild(typeSelect2);
+    const basic = document.createElement("div");
+    basic.classList.add("basic");
+    basic.appendChild(nicknameInput);
+    basic.appendChild(areaInput);
+
+    const poke1 = document.createElement("div");
+    poke1.classList.add("pc1");
+    poke1.appendChild(nameInput1);
+    poke1.appendChild(typeSelect1);
+
+    const poke2 = document.createElement("div");
+    poke2.classList.add("pc2");
+    poke2.appendChild(nameInput2);
+    poke2.appendChild(typeSelect2);
+
+    const team = document.createElement("div");
+    team.classList.add("team");
+    team.appendChild(poke1);
+    team.appendChild(poke2);
+
+    const div = document.createElement("div");
+    div.classList.add("entry");
+    div.appendChild(basic);
+    div.appendChild(team);
     div.appendChild(removeBtn);
 
     return div;
