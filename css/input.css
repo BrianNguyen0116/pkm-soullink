@@ -40,7 +40,6 @@ textarea {
     font: 15px "Arial", sans-serif;
     background: var(--v4);
     color: var(--text);
-    height: 25em;
     width: 100%;
     resize: vertical;
 }

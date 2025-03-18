@@ -8,15 +8,19 @@ function closeModalAlert() {
 }
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.getElementById("customAlert").style.display === "block") {
+    if (e.key === 'Escape')
+        if (document.getElementById("customAlert").style.display === "block") {
         closeModalAlert();
+        } else if (document.getElementById("combinationModal").style.display === "block") {
+            closeCombinationModal();
+        }
     }
-});
+);
 
 const textarea = document.querySelector("textarea");
 
 const insertTabCharacter = () => {
-    const { value, selectionStart, selectionEnd } = textarea;
+    const { value, selectionEnd } = textarea;
 
     textarea.value = `${value.substring(0, selectionEnd)}\t${value.substring(selectionEnd)}`;
 

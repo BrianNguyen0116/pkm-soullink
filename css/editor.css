@@ -78,6 +78,12 @@
 .display img {
     width: 70px;
     height: 70px;
+    cursor: pointer;
+}
+
+.display img:hover {
+    outline: 1px white solid;
+    background: var(--v1);
 }
 
 .remove-button {

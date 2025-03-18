@@ -6,6 +6,7 @@ Have a friend to play pokemon? Must be nice, here's a tool to make your lives ea
 
 * Pokemon PC Tracking and Visualizer
 * Valid Team-Combination Generation
+* Pokemon Info Finder
 
 This is only useful for you if you're following the __no same primary type__ rule. The tool is made using only basic Javascript without any external libraries to be used on any device (the logic wouldn't need one anyways). You can visit the site [here](https://briannguyen0116.github.io/pkm-soullink/).
 
@@ -41,8 +42,13 @@ There are two ways to modify your PCs.
 2. If you __hate JSON__, you can use the site form and save the file for future use through the ```Save as JSON``` button.
 
 
-### The Actual Use
+### Run
 
 Once the team has been prepared, click ```Run``` and feel free to select pokemons you would like to prioritize. Each combination produced can be clicked to show a summary of the different teams and their coverage.
 
 There isn't much else, the tool is intended to be simple and you can modify the code however you'd like.
+
+
+### Pokemon Finder
+
+Quickly writing in a pokemon name produces the pokemon's basic information like its weaknesses, resistances, catch and type.
