@@ -42,14 +42,27 @@ function processInput() {
 
         PC = jsonData;
 
-        for (const obj of [...PC]) {
-            if (!obj.name1 || !obj.name2 || !obj.type1 || !obj.type2 || !obj.area) {
-                throw new Error("Each object must have 'name', 'type' and 'area' attributes.");
-            }
+        const req = [
+            { key: "name1" },
+            { key: "name2" },
+            { key: "type1" },
+            { key: "type2" },
+            { key: "area" }
+        ];
 
-            if (!poketypes.some(p => p.type === obj.type1) || !poketypes.some(p => p.type === obj.type2)) {
-                throw new Error(`Invalid type "${obj.type}" found. Must be one of: ${poketypes.map(p => p.type).join(", ")}`);
+        for (const obj of [...PC]) {
+
+            const missing = req.filter(attr => !obj[attr.key]);
+            if (missing.length) {
+                throw new Error(`Missing attributes: ${obj.nickname}`);
             }
+            
+            // Validate types in one step
+            ["type1", "type2"].forEach(typeKey => {
+                if (!poketypes.some(p => p.type === obj[typeKey])) {
+                    throw new Error(`Invalid type "${obj[typeKey]}" found. Must be one of: ${poketypes.map(p => p.type).join(", ")}`);
+                }
+            });
         }
 
         displayEditableLists();
@@ -91,11 +104,12 @@ function uploadJSON(event) {
 }
 
 async function saveJSON() {
-    const updatedJSON = {
-        PC: PC,
-    };
 
-    const jsonString = JSON.stringify(updatedJSON, null, 4);
+    if (!PC) {
+        throw new Error("PC data is required to save the JSON.");
+    }
+
+    const jsonString = JSON.stringify(PC, null, 4);
     const blob = new Blob([jsonString], { type: "application/json" });
 
     const handle = await window.showSaveFilePicker({
@@ -108,7 +122,7 @@ async function saveJSON() {
         ],
     });
 
-    const writableStream = await handle.createWritable(opts);
+    const writableStream = await handle.createWritable();
 
     await writableStream.write(blob);
 
@@ -233,8 +247,10 @@ function displayCombinations(selectedNames) {
     combinationsDiv.innerHTML = "<h3>Valid Combinations:</h3>";
 
     const filteredCombinations = allCombinations.filter(combo =>
-        selectedNames.every(nickname => combo.some(item => item.nickname === nickname))
+        selectedNames.every(nickname => combo.some(item => item.nickname === nickname)),
     );
+
+    filteredCombinations.sort((a, b) => b.length - a.length);
 
     if (filteredCombinations.length == 0) {
         const element = document.createElement("p");
@@ -370,12 +386,17 @@ function createEditableRow(item, index, setName) {
     });
     typeSelect2.classList.add("type-input");
 
-    nicknameInput.oninput = (event) => debouncedUpdateData(index, setName, "nickname", event.target.value);
-    nameInput1.oninput = (event) => debouncedUpdateData(index, setName, "name1", event.target.value);
-    nameInput2.oninput = (event) => debouncedUpdateData(index, setName, "name2", event.target.value);
-    areaInput.oninput = (event) => debouncedUpdateData(index, setName, "area", event.target.value);
-    typeSelect1.onchange = (event) => debouncedUpdateData(index, setName, "type1", event.target.value);
-    typeSelect2.onchange = (event) => debouncedUpdateData(index, setName, "type2", event.target.value);
+    const addInputEvents = (element, attr, eventType) => {
+        element[eventType] = (event) => debouncedUpdateData(index, attr, event.target.value);
+        element.onblur = (event) => Updatedata(index, attr, event.target.value);
+    };
+    
+    addInputEvents(nicknameInput, "nickname", "oninput");
+    addInputEvents(nameInput1, "name1", "oninput");
+    addInputEvents(nameInput2, "name2", "oninput");
+    addInputEvents(areaInput, "area", "oninput");
+    addInputEvents(typeSelect1, "type1", "onchange");
+    addInputEvents(typeSelect2, "type2", "onchange");
 
     const removeBtn = document.createElement("button");
     removeBtn.classList.add("remove-button");
@@ -411,6 +432,7 @@ function createEditableRow(item, index, setName) {
     return div;
 }
 
+
 function debounce(func, timeout = 300){
     let timer;
     return (...args) => {
@@ -419,14 +441,20 @@ function debounce(func, timeout = 300){
     };
 }
 
-const debouncedUpdateData = debounce((index, setName, key, value) => {
+const debouncedUpdateData = debounce((index, key, value) => {
     PC[index][key] = value;
     displayEditableLists();
     applyJSON();
-}, 300);
+}, 750);
+
+function Updatedata(index, key, value) {
+    PC[index][key] = value;
+    displayEditableLists();
+    applyJSON();
+}
 
 function addRow() {
-    const newRow = { nickname: "", name1: "", name2: "", area: "", type: poketypes[0].type };
+    const newRow = { nickname: "", name1: "", name2: "", area: "", type1: poketypes[0].type, type2: poketypes[0].type };
 
     PC.push(newRow);
 

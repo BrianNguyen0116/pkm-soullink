@@ -15,6 +15,14 @@
     background: var(--v4);
 }
 
+.container button:hover {
+    filter: brightness(85%);
+}
+
+.container button:active {
+    background: gray;
+}
+
 #inputContainer {
     display: flex;
 }

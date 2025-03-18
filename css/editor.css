@@ -21,17 +21,14 @@
     gap: 10px;
     justify-content: space-between;
     margin: 12px 0;
+    outline: 2px #fff solid;
+    border-radius: 15px;
 }
 
 .entry input, select {
     padding: 5px;
     border-radius: 10px;
     border: none;
-}
-
-.editor button {
-    padding: 10px;
-    background: var(--v4);
 }
 
 .basic, .team {
@@ -45,11 +42,6 @@
 .pc1, .pc2 {
     display: flex;
     gap: 5px;
-}
-
-.basic {
-    outline: 2px #fff solid;
-    border-radius: 10px;
 }
 
 .nickname-input {
@@ -66,11 +58,25 @@
 }
 
 .remove-button {
-    border-radius: 15px;
+    border-radius: 0 15px 15px 0;
+    color: var(--bd);
+    background: white;
+    font-weight: 900;
+}
+
+.remove-button:hover { 
+    background: var(--bd);
+    color: white;
+}
+
+.remove-button:active {
+    background: var(--bd-dark);
+    color: white;
 }
 
 .row-button {
     height: 30px;
+    background: var(--v4);
 }
 
 .editorButtons {
@@ -84,5 +90,4 @@
 
 .editorButtons button {
     width: 100%;
-    background: var(--v4);
 }
