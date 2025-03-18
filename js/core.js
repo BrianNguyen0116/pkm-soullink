@@ -206,6 +206,18 @@ async function getPokemonImage(name) {
         JSON Utility
 ============================= */
 
+window.onload = function () {
+    const savedJsonInput = localStorage.getItem('jsonInput');
+    
+    if (savedJsonInput) {
+        document.getElementById('jsonInput').value = savedJsonInput;
+    }
+    
+    document.getElementById('jsonInput').addEventListener('input', () => {
+        localStorage.setItem('jsonInput', content);
+    });
+};
+
 function uploadJSON(event) {
     const file = event.target.files[0]; 
 
@@ -216,8 +228,10 @@ function uploadJSON(event) {
     reader.onload = function(e) {
         try {
             const jsonData = JSON.parse(e.target.result); 
+            const jsonString = JSON.stringify(jsonData, null, 4);
 
-            document.getElementById("jsonInput").value = JSON.stringify(jsonData, null, 4);
+            document.getElementById("jsonInput").value = jsonString;
+            localStorage.setItem('jsonInput', jsonString);
 
             processInput();
 
@@ -230,13 +244,14 @@ function uploadJSON(event) {
 }
 
 async function saveJSON() {
-
     if (!PC) {
         throw new Error("PC data is required to save the JSON.");
     }
 
     const jsonString = JSON.stringify(PC, null, 4);
     const blob = new Blob([jsonString], { type: "application/json" });
+
+    localStorage.setItem('jsonInput', jsonString);
 
     const handle = await window.showSaveFilePicker({
         suggestedName: 'soullink-save.json',
@@ -256,7 +271,9 @@ async function saveJSON() {
 }
 
 function applyJSON() {
+    const jsonInputValue = document.getElementById('jsonInput').value;
     document.getElementById("jsonInput").value = JSON.stringify(PC, null, 4);
+    localStorage.setItem('jsonInput', content);
 }
 
 
@@ -519,6 +536,7 @@ function createInputElement(className, value) {
 
 function createTypeSelect(selectedType) {
     const select = document.createElement("select");
+    select.classList.add(selectedType);
     poketypes.forEach(pokeType => {
         const option = document.createElement("option");
         option.value = pokeType.type;
