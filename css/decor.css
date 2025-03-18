@@ -18,3 +18,111 @@ html {
     background-repeat: repeat;
     background-size: 150px;
 }
+
+.Normal {
+    background: #eeeeee;
+    outline: 2px #bebebe solid;
+    color: black;
+}
+
+.Fire {
+    background: #ff5050;
+    outline: 2px #ff0000 solid;
+    color: white;
+}
+
+.Water {
+    background: #5050ff;
+    outline: 2px blue solid;
+    color: white;
+}
+
+.Electric {
+    background: #fffc50;
+    outline: 2px #d9ff00 solid;
+    color: black;
+}
+
+.Grass {
+    background: #5fe045;
+    outline: 2px #12c901 solid;
+    color: black;
+}
+
+.Ice {
+    background: #50ffff;
+    outline: 2px #00fff2 solid;
+    color: black;
+}
+
+.Fighting {
+    background: #c70000;
+    outline: 2px #b40000 solid;
+    color: white;
+}
+
+.Poison {
+    background: #c900a7;
+    outline: 2px #ad00cf solid;
+    color: white;
+}
+
+.Ground {
+    background: #ffbb00;
+    outline: 2px #b17900 solid;
+    color: white;
+}
+
+.Flying {
+    background: #7962ff;
+    outline: 2px #6f00ff solid;
+    color: white;
+}
+
+.Psychic {
+    background: #ff62f2;
+    outline: 2px #ff00d4 solid;
+    color: white;
+}
+
+.Bug {
+    background: #82ce45;
+    outline: 2px #5ccc00 solid;
+    color: black;
+}
+
+.Rock {
+    background: #b17900;
+    outline: 2px rgb(168, 90, 0) solid;
+    color: white;
+}
+
+.Ghost {
+    background: #6800c9;
+    outline: 2px #3f0063 solid;
+    color: white;
+}
+
+.Dragon {
+    background: #b362ff;
+    outline: 2px #a200ff solid;
+    color: white;
+}
+
+.Dark {
+    background: #381600;
+    outline: 2px #030200 solid;
+    color: white;
+}
+
+.Steel {
+    background: #a9a9a9;
+    outline: 2px #3f3f3f solid;
+    color: white;
+}
+
+.Fairy {
+    background: #da62ff;
+    outline: 2px #d400ff solid;
+    color: white;
+}

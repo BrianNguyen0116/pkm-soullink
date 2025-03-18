@@ -16,6 +16,21 @@ body {
     padding: 20px;
 }
 
+.wrapper {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+    border-radius: 15px;
+}
+
 button {
     color: var(--text);
     border-radius: 5px;
