@@ -25,8 +25,17 @@ const poketypes = [
 
 
 window.onload = () => {
-    const jsonData = JSON.parse(document.getElementById("jsonInput").value);
-    PC = jsonData;
+    const savedJsonInput = localStorage.getItem('jsonInput');
+
+    if (savedJsonInput) {
+        document.getElementById('jsonInput').value = savedJsonInput;
+    }
+    
+    document.getElementById('jsonInput').addEventListener('input', (e) => {
+        localStorage.setItem('jsonInput', e.target.value);
+    });
+    
+    PC = JSON.parse(savedJsonInput);
 
     displayEditableLists();
 }
@@ -206,23 +215,13 @@ async function getPokemonImage(name) {
         JSON Utility
 ============================= */
 
-window.onload = function () {
-    const savedJsonInput = localStorage.getItem('jsonInput');
-    
-    if (savedJsonInput) {
-        document.getElementById('jsonInput').value = savedJsonInput;
-    }
-    
-    document.getElementById('jsonInput').addEventListener('input', () => {
-        localStorage.setItem('jsonInput', content);
-    });
-};
-
 function uploadJSON(event) {
     const file = event.target.files[0]; 
 
-    if (!file)
+    if (!file) {
         showModalAlert("Missing file.");
+        return;
+    }
 
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -245,7 +244,13 @@ function uploadJSON(event) {
 
 async function saveJSON() {
     if (!PC) {
-        throw new Error("PC data is required to save the JSON.");
+        showModalAlert("PC data is required to save the JSON.");
+        return
+    }
+
+    if (!window.showSaveFilePicker) {
+        showModalAlert("Your browser does not support file saving.");
+        return;
     }
 
     const jsonString = JSON.stringify(PC, null, 4);
@@ -271,9 +276,8 @@ async function saveJSON() {
 }
 
 function applyJSON() {
-    const jsonInputValue = document.getElementById('jsonInput').value;
     document.getElementById("jsonInput").value = JSON.stringify(PC, null, 4);
-    localStorage.setItem('jsonInput', content);
+    localStorage.setItem('jsonInput',  document.getElementById("jsonInput").value);
 }
 
 
