@@ -4,9 +4,8 @@
 
 Have a friend to play pokemon? Must be nice, here's a tool to make your lives easier. The features of the website include:
 
-* Pokemon Inventory Tracking and Visualizer
+* Pokemon PC Tracking and Visualizer
 * Valid Team-Combination Generation
-* Pokemon Type Coverage
 
 This is only useful for you if you're following the __no same primary type__ rule. The tool is made using only basic Javascript without any external libraries to be used on any device (the logic wouldn't need one anyways). You can visit the site [here](https://briannguyen0116.github.io/pkm-soullink/).
 
@@ -14,12 +13,13 @@ This is only useful for you if you're following the __no same primary type__ rul
 
 
 ### PC Management
-To use the tool, you need to properly track the pokemon. It isn't too much assuming the user knows what a __JSON__ is.
+To use the tool, you need to properly track the pokemon. 
 
-* There are two object arrays: PC_1 and PC_2.
-* Each object carries a _name_ and _type_.
-    * The name is the shared nickname between you and your friend's pokemon.
-    * The type is, you guessed it, the pokemon type.
+* Each object carries a _nickname_, two _names_, two _types_ and an _area_ .
+    * The nickname is the shared nickname between you and your friend's pokemon.
+    * The name is the pokemon's actual name.
+    * The type is the pokemon's primary type.
+    * (optional) The area is the location where you found the pokemon.
 
 Here is what is prepared when you visit the site:
 

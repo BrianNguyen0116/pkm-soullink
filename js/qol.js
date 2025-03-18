@@ -7,6 +7,12 @@ function closeModalAlert() {
     document.getElementById("customAlert").style.display = "none";
 }
 
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById("customAlert").style.display === "block") {
+        closeModalAlert();
+    }
+});
+
 const textarea = document.querySelector("textarea");
 
 const insertTabCharacter = () => {
@@ -21,5 +27,12 @@ textarea.addEventListener('keydown', (e) => {
     if (e.key === 'Tab') {
         e.preventDefault();
         insertTabCharacter();
+    }
+});
+
+document.getElementById('pokemonNameInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        getPokemonInfo();
     }
 });

@@ -3,25 +3,26 @@ let PC = [];
 
 // Massive Poke-dictionary because no-nodejs fun times
 const poketypes = [
-    { type: "Normal", strongTo: [], weakTo: ["Fighting"] },
-    { type: "Fire", strongTo: ["Bug", "Grass", "Ice", "Steel"], weakTo: ["Ground", "Rock", "Water"] },
-    { type: "Water", strongTo: ["Fire", "Ground", "Rock"], weakTo: ["Electric", "Grass"] },
-    { type: "Grass", strongTo: ["Water", "Ground", "Rock"], weakTo: ["Fire", "Bug", "Flying", "Poison"] },
-    { type: "Electric", strongTo: ["Water", "Flying"], weakTo: ["Ground"] },
-    { type: "Ice", strongTo: ["Flying", "Ground", "Grass", "Dragon"], weakTo: ["Fire", "Fighting", "Steel"] },
-    { type: "Fighting", strongTo: ["Normal", "Rock", "Steel", "Ice", "Dark"], weakTo: ["Flying", "Psychic", "Fairy"] },
-    { type: "Poison", strongTo: ["Grass", "Fairy"], weakTo: ["Ground", "Psychic"] },
-    { type: "Ground", strongTo: ["Electric", "Poison", "Rock", "Steel", "Fire"], weakTo: ["Water", "Grass", "Ice"] },
-    { type: "Flying", strongTo: ["Fighting", "Bug", "Grass"], weakTo: ["Electric", "Ice", "Rock"] },
-    { type: "Psychic", strongTo: ["Fighting", "Poison"], weakTo: ["Bug", "Dark", "Psychic"] },
-    { type: "Bug", strongTo: ["Grass", "Dark", "Psychic"], weakTo: ["Fire", "Flying", "Rock"] },
-    { type: "Rock", strongTo: ["Bug", "Ice", "Flying", "Fire"], weakTo: ["Fighting", "Ground", "Water", "Steel"] },
-    { type: "Ghost", strongTo: ["Ghost", "Psychic"], weakTo: ["Ghost", "Dark"] },
-    { type: "Dragon", strongTo: ["Dragon"], weakTo: ["Ice", "Dragon", "Fairy"] },
-    { type: "Dark", strongTo: ["Ghost", "Psychic"], weakTo: ["Fighting", "Bug", "Fairy"] },
-    { type: "Steel", strongTo: ["Rock", "Ice", "Fairy"], weakTo: ["Fighting", "Ground", "Fire"] },
-    { type: "Fairy", strongTo: ["Dragon", "Fighting", "Dark"], weakTo: ["Poison", "Steel"] }
+    { type: "Normal", resistantTo: [], weakTo: ["Fighting"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/1.png" },
+    { type: "Fire", resistantTo: ["Bug", "Fairy", "Fire", "Grass", "Ice", "Steel"], weakTo: ["Ground", "Rock", "Water"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/10.png" },
+    { type: "Water", resistantTo: ["Fire", "Ice", "Steel"], weakTo: ["Electric", "Grass"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/11.png" },
+    { type: "Grass", resistantTo: ["Electric", "Ground", "Water"], weakTo: ["Fire", "Ice", "Flying", "Bug", "Poison"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/12.png" },
+    { type: "Electric", resistantTo: ["Flying", "Steel"], weakTo: ["Ground"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/13.png" },
+    { type: "Ice", resistantTo: ["Flying", "Dragon", "Grass", "Ground"], weakTo: ["Fire", "Fighting", "Rock", "Steel"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/15.png" },
+    { type: "Fighting", resistantTo: ["Bug", "Dark", "Rock"], weakTo: ["Fairy", "Flying", "Psychic"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/2.png" },
+    { type: "Poison", resistantTo: ["Bug", "Fairy"], weakTo: ["Ground", "Psychic"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/4.png" },
+    { type: "Ground", resistantTo: ["Electric", "Poison", "Rock", "Steel", "Fire"], weakTo: ["Water", "Ice", "Grass"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/5.png" },
+    { type: "Flying", resistantTo: ["Bug", "Fairy", "Fighting"], weakTo: ["Electric", "Ice", "Rock"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/3.png" },
+    { type: "Psychic", resistantTo: ["Fighting", "Psychic"], weakTo: ["Bug", "Dark", "Ghost"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/14.png" },
+    { type: "Bug", resistantTo: ["Fighting", "Grass", "Psychic"], weakTo: ["Fire", "Flying", "Rock"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/7.png" },
+    { type: "Rock", resistantTo: ["Bug", "Fire", "Flying", "Normal"], weakTo: ["Fighting", "Ground", "Steel", "Water"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/6.png" },
+    { type: "Ghost", resistantTo: ["Bug", "Ghost", "Psychic"], weakTo: ["Dark", "Ghost"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/8.png" },
+    { type: "Dragon", resistantTo: ["Dragon"], weakTo: ["Fairy", "Ice", "Dragon"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/16.png" },
+    { type: "Dark", resistantTo: ["Ghost", "Psychic"], weakTo: ["Fighting", "Bug", "Fairy"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/17.png" },
+    { type: "Steel", resistantTo: ["Bug", "Dark", "Dragon", "Fairy", "Flying", "Grass", "Ice", "Normal", "Psychic", "Rock", "Steel"], weakTo: ["Fighting", "Fire", "Ground"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/9.png" },
+    { type: "Fairy", resistantTo: ["Dark", "Dragon", "Fighting"], weakTo: ["Poison", "Steel"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/18.png" }
 ];
+
 
 window.onload = () => {
     const jsonData = JSON.parse(document.getElementById("jsonInput").value);
@@ -34,7 +35,6 @@ window.onload = () => {
         Input Section
 ============================= */
 function processInput() {
-    document.getElementById("errorMessage").textContent = "";
     document.getElementById("combinations").innerHTML = "<h3>Valid Combinations:</h3>";
 
     try {
@@ -46,8 +46,7 @@ function processInput() {
             { key: "name1" },
             { key: "name2" },
             { key: "type1" },
-            { key: "type2" },
-            { key: "area" }
+            { key: "type2" }
         ];
 
         for (const obj of [...PC]) {
@@ -75,6 +74,132 @@ function processInput() {
     findValidCombinations(PC);
 }
 
+
+/* =============================
+        Poke Util Section 
+============================= */
+
+async function getPokemonInfo() {
+    const pokemonName = document.getElementById('pokemonNameInput').value.toLowerCase();
+    const pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonName}`;
+    const speciesUrl = `https://pokeapi.co/api/v2/pokemon-species/${pokemonName}`;
+
+    document.getElementById('pokemonInfo').innerHTML = '';
+
+    try {
+        const response = await fetch(pokemonUrl);
+        const data = await response.json();
+
+        const speciesResponse = await fetch(speciesUrl);
+        const speciesData = await speciesResponse.json();
+        
+        const captureRate = speciesData.capture_rate;
+        const captureRatePercentage = Math.abs(((255 - (captureRate * 255)) / 255) / 255).toFixed(2) * 100;
+
+        const types = data.types.map(typeInfo => String(typeInfo.type.name).charAt(0).toUpperCase() + String(typeInfo.type.name).slice(1));
+        const { resistantTo, weakTo } = getStrengthsAndWeaknesses(types);
+
+        const createInfoElement = (id, label, content) => {
+            const div = document.createElement("div");
+            div.id = id;
+            div.innerHTML = `<strong>${label}:</strong> ${content}`;
+            return div;
+        };
+        
+        const pokeName = document.createElement("h3");
+        pokeName.id = "pokemonName";
+        pokeName.innerText = `${pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1)} Info`;
+        
+        const pokeImg = document.createElement("img");
+        pokeImg.src = await getPokemonImage(pokemonName);
+        
+        const pokeTypes = createInfoElement("types", "Types", types.join(", "));
+        const pokeCapture = createInfoElement("captureRate", "Capture Rate", `${captureRate} (${captureRatePercentage}%)`);
+
+        // Create Weaknesses and Resistances Div Containers
+        const createTypeImageCollection = (types, label) => {
+            const containerDiv = document.createElement("div");
+            const labelElement = document.createElement("h3");
+            labelElement.innerText = label;
+            containerDiv.appendChild(labelElement);
+
+            const imagesDiv = document.createElement("div");
+            imagesDiv.classList.add("collection");
+
+            types.forEach(type => {
+                const typeInfo = poketypes.find(t => t.type === type);
+                if (typeInfo) {
+                    const img = document.createElement("img");
+                    img.src = typeInfo.image; // Use the image URL from poketypes
+                    img.alt = type;
+                    imagesDiv.appendChild(img);
+                }
+            });
+            
+            containerDiv.appendChild(imagesDiv);
+            return containerDiv;
+        };
+
+        const pokeResist = createTypeImageCollection(resistantTo, "Resistances");
+        const pokeWeak = createTypeImageCollection(weakTo, "Weaknesses");
+        
+        const div = document.createElement("div");
+        div.append(pokeName, pokeImg, pokeCapture, pokeTypes, pokeResist, pokeWeak);
+        
+        document.getElementById('pokemonInfo').appendChild(div);
+    } catch (error) {
+        showModalAlert('Error fetching Pokémon data. Please try again.');
+    }
+}
+
+function getStrengthsAndWeaknesses(types) {
+    let resistantTo = [];
+    let weakTo = [];
+
+    // Loop through each type and add corresponding resistances and weaknesses
+    types.forEach(type => {
+        const typeInfo = poketypes.find(t => t.type === type);
+        if (typeInfo) {
+            resistantTo = [...new Set([...resistantTo, ...typeInfo.resistantTo])];
+            weakTo = [...new Set([...weakTo, ...typeInfo.weakTo])];
+        }
+    });
+
+    // Now we need to handle the case where types both strong and weak to another type
+    let finalStrongTo = [];
+    let finalWeakTo = [];
+
+    // Determine final resistances and weaknesses by checking for conflicts
+    resistantTo.forEach(str => {
+        if (weakTo.includes(str)) {
+            // Remove from both if it's in both
+            weakTo = weakTo.filter(item => item !== str);
+        } else {
+            finalStrongTo.push(str);
+        }
+    });
+
+    weakTo.forEach(weak => {
+        if (!resistantTo.includes(weak)) {
+            finalWeakTo.push(weak);
+        }
+    });
+
+    return { resistantTo: finalStrongTo, weakTo: finalWeakTo };
+}
+
+
+async function getPokemonImage(name) {
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
+        if (!response.ok) throw new Error("Pokemon not found");
+        const data = await response.json();
+        return data.sprites.front_default;
+    } catch (error) {
+        showModalAlert(`Error fetching image for ${name}:`, error);
+        return "";
+    }
+}
 
 /* =============================
         JSON Utility
@@ -335,17 +460,17 @@ function closeCombinationModal() {
         Form Section 
 ============================= */
 
-function displayEditableLists() {
+async function displayEditableLists() {
     const pcList = document.getElementById("pcList");
     pcList.innerHTML = "";
 
-    PC.forEach((item, index) => {
-        pcList.appendChild(createEditableRow(item, index, "PC"));
-    });
+    for (const [index, item] of PC.entries()) {
+        const row = await createEditableRow(item, index, "PC");
+        pcList.appendChild(row);  // Ensure this is always a valid DOM node
+    }
 }
 
-function createEditableRow(item, index, setName) {
-
+async function createEditableRow(item, index, setName) {
     const nicknameInput = document.createElement("input");
     nicknameInput.value = item.nickname;
     nicknameInput.classList.add("nickname-input");
@@ -369,6 +494,7 @@ function createEditableRow(item, index, setName) {
         option.textContent = pokeType.type;
         if (pokeType.type === item.type1) {
             option.selected = true;
+            typeSelect1.classList.add(pokeType.type);
         }
         typeSelect1.appendChild(option);
     });
@@ -381,6 +507,7 @@ function createEditableRow(item, index, setName) {
         option.textContent = pokeType.type;
         if (pokeType.type === item.type2) {
             option.selected = true;
+            typeSelect2.classList.add(pokeType.type);
         }
         typeSelect2.appendChild(option);
     });
@@ -388,7 +515,7 @@ function createEditableRow(item, index, setName) {
 
     const addInputEvents = (element, attr, eventType) => {
         element[eventType] = (event) => debouncedUpdateData(index, attr, event.target.value);
-        element.onblur = (event) => Updatedata(index, attr, event.target.value);
+        element.onblur = (event) => updateData(index, attr, event.target.value);
     };
     
     addInputEvents(nicknameInput, "nickname", "oninput");
@@ -423,15 +550,39 @@ function createEditableRow(item, index, setName) {
     team.appendChild(poke1);
     team.appendChild(poke2);
 
+    const name1Img = document.createElement("img");
+    const name2Img = document.createElement("img");
+
+    name1Img.src = await getPokemonImage(item.name1);
+    name2Img.src = await getPokemonImage(item.name2);
+
+    name1Img.alt = item.name1;
+    name2Img.alt = item.name2;
+
+    const display = document.createElement("div");
+    display.classList.add("display");
+    display.appendChild(name1Img);
+    display.appendChild(name2Img);
+
     const div = document.createElement("div");
     div.classList.add("entry");
     div.appendChild(basic);
+    div.appendChild(display);
     div.appendChild(team);
     div.appendChild(removeBtn);
 
     return div;
 }
 
+function updateSelectBoxes() {
+    const selectBoxes = document.querySelectorAll("#pcList select");
+
+    selectBoxes.forEach(select => {
+        const selectedValue = select.value;
+        select.className = "";
+        select.classList.add("type-input", selectedValue); 
+    });
+}
 
 function debounce(func, timeout = 300){
     let timer;
@@ -443,13 +594,13 @@ function debounce(func, timeout = 300){
 
 const debouncedUpdateData = debounce((index, key, value) => {
     PC[index][key] = value;
-    displayEditableLists();
+    updateSelectBoxes();
     applyJSON();
-}, 750);
+}, 300);
 
-function Updatedata(index, key, value) {
+function updateData(index, key, value) {
     PC[index][key] = value;
-    displayEditableLists();
+    updateSelectBoxes();
     applyJSON();
 }
 
@@ -469,3 +620,4 @@ function removeRow(index) {
         showModalAlert("You must have at least one row.");
     }
 }
+

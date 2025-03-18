@@ -4,17 +4,20 @@
     display: flex;
     justify-content: center;
     gap: 20px;
-    margin-top: 20px;
 }
 
 .editable-list {
     border: 1px solid black;
-    padding: 10px;
+    padding: 20px;
+    box-sizing: border-box;
     border-radius: 5px;
-    text-align: left;
+    text-align: center;
     background-color: var(--v2);
 }
 
+.editable-list h3 {
+    font: 1em "Press Start 2P", monospace;
+}
 
 .entry {
     display: flex;
@@ -57,6 +60,26 @@
     color: white;
 }
 
+.type-input {
+    font-weight: 700;
+    box-sizing: border-box;
+}
+
+.type-input option {
+    background-color: white;
+    color: black;
+}
+
+.display { 
+    display:flex;
+    flex-direction: row;
+}
+
+.display img {
+    width: 70px;
+    height: 70px;
+}
+
 .remove-button {
     border-radius: 0 15px 15px 0;
     color: var(--bd);
@@ -75,8 +98,19 @@
 }
 
 .row-button {
-    height: 30px;
+    height: 28px;
+    font-size: 15px;
+    font-weight: 700;
     background: var(--v4);
+    border-radius: 50px;
+}
+
+.row-button:hover {
+    filter: brightness(85%);
+}
+
+.row-button:active {
+    background: gray;
 }
 
 .editorButtons {

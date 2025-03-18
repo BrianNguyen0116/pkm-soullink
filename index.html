@@ -8,49 +8,58 @@
     <link rel="stylesheet" href="css/decor.css">
     <link rel="stylesheet" href="css/filter.css">
     <link rel="stylesheet" href="css/input.css">
+    <link rel="stylesheet" href="css/calc.css">
     <link rel="stylesheet" href="css/output.css">
     <link rel="stylesheet" href="css/editor.css">
     <link rel="stylesheet" href="css/modal.css">
 </head>
 
 <body>
-    <div class="container">
-        <div id="inputContainer">
-            <textarea id="jsonInput">
+    <div class="wrapper">
+        <div id="left" class="column">
+            <div id="inputContainer">
+                <textarea id="jsonInput">
 [
     {
-        "nickname": "Cool Guy",
-        "name1": "Wooper",
-        "name2": "Beldum",
-        "type1": "Water",
-        "type2": "Steel",
+        "nickname": "Bellpepper",
+        "name1": "Beldum",
+        "name2": "Wooper",
+        "type1": "Steel",
+        "type2": "Water",
         "area": "Route 212"
     }
 ]
-            </textarea>
+                </textarea>
+                <button onclick="processInput()">Run</button>
+        
+                <div class="editorButtons">
+                    <button onclick="saveJSON()">Save as JSON</button>
+                    <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="uploadJSON(event)">
+                    <button onclick="document.getElementById('jsonFileInput').click()">Upload JSON</button>
+                </div>  
+            </div>
+            <div id="calculator">
+                <h3>Pokemon Finder</h2>
+                <input type="text" id="pokemonNameInput" placeholder="Enter Pokémon name..." />
+                <button onclick="getPokemonInfo()">Get Info</button>
+            </div>
+            <div id="pokemonInfo">
+            </div>
         </div>
-        <button onclick="processInput()">Run</button>
-
-        <div class="editorButtons">
-            <button onclick="saveJSON()">Save as JSON</button>
-            <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="uploadJSON(event)">
-            <button onclick="document.getElementById('jsonFileInput').click()">Upload JSON</button>
-        </div>    
-
-        <div id="errorMessage" class="error"></div>
-    </div>
-    
-    <div class="editor">
-        <div class="editable-list">
-            <h3>PC</h3>
-            <div id="pcList"></div>
-            <button class="row-button" onclick="addRow()">Add Row</button>
+        <div class="column">
+            <div class="editor">
+                <div class="editable-list">
+                    <h3>[ PC ]</h3>
+                    <div id="pcList"></div>
+                    <button class="row-button" onclick="addRow()">+</button>
+                </div>
+        
+            </div>
+        
+            <div class="combinations" id="combinations">
+                <div id="grass"></div>
+            </div>
         </div>
-
-    </div>
-
-    <div class="combinations" id="combinations">
-        <div id="grass"></div>
     </div>
 
 
@@ -65,7 +74,7 @@
     <div id="customAlert" class="modal-overlay">
         <div class="modal-box">
             <p id="modalMessage"></p>
-            <button onclick="closeModalAlert()">OK</button>
+            <button id="closeModal" onclick="closeModalAlert()">OK</button>
         </div>
     </div>
 
