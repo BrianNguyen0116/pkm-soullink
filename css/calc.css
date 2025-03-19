@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 #calculator, #pokemonInfo {
+    position:relative;
     width: 100%;
     background-color: var(--v2);
     border: 1px solid black;
@@ -56,6 +57,13 @@
     border-radius: 15px 15px 0 0;
 }
 
+
+.stats {
+    margin: 10px 0 20px 0;
+    outline: 1px var(--v1) solid;
+    border-radius: 15px 15px 0 0;
+}
+
 .Resistances {
     background: #006300;
     color: #003800;
@@ -70,8 +78,18 @@
     background: #000;
 }
 
-.stats {
-    margin: 10px 0 20px 0;
-    outline: 1px var(--v1) solid;
-    border-radius: 15px;
+.Types-sub {
+    background: #b8b8b8;
+}
+
+.Resistances-sub {
+    background: #2f8b2f;
+}
+
+.Weaknesses-sub {
+    background: #ad4242;
+}
+
+.Immunities-sub {
+    background: #1a1a1a;
 }

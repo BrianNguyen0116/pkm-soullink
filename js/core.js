@@ -1,5 +1,6 @@
 let allCombinations = [];
 let PC = [];
+let pokemonList = []; 
 
 // Massive Poke-dictionary because no-nodejs fun times
 const poketypes = [
@@ -24,7 +25,7 @@ const poketypes = [
 ];
 
 
-window.onload = () => {
+window.onload = async () => {
     const savedJsonInput = localStorage.getItem('jsonInput');
 
     if (savedJsonInput) {
@@ -36,6 +37,13 @@ window.onload = () => {
     });
     
     PC = JSON.parse(savedJsonInput);
+    pokemonList = await fetchPokemonList();
+
+    const pokemonInput = document.getElementById("pokemonNameInput");
+    const dropdown = document.createElement("div");
+    dropdown.classList.add("searchable-dropdown");
+    document.getElementById("calculator").appendChild(dropdown);
+    createSearchableInput(pokemonInput, dropdown, 'pokemon', 'name');
 
     displayEditableLists();
 }
@@ -91,13 +99,14 @@ function processInput() {
 async function getPokemonInfo() {
     const pokemonName = document.getElementById('pokemonNameInput').value.toLowerCase();
     const pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonName}`;
-    const speciesUrl = `https://pokeapi.co/api/v2/pokemon-species/${pokemonName}`;
 
     document.getElementById('pokemonInfo').innerHTML = '';
 
     try {
         const response = await fetch(pokemonUrl);
         const data = await response.json();
+
+        const speciesUrl = data.species.url ? data.species.url : "https://pokeapi.co/api/v2/pokemon-species/${pokemonName}";
 
         const speciesResponse = await fetch(speciesUrl);
         const speciesData = await speciesResponse.json();
@@ -183,6 +192,7 @@ function createTypeImageCollection (types, label) {
     containerDiv.appendChild(labelElement);
 
     const imagesDiv = document.createElement("div");
+    imagesDiv.classList.add(`${label}-sub`);
     imagesDiv.classList.add("collection");
 
     types.forEach(type => {
@@ -210,6 +220,13 @@ async function getPokemonImage(name) {
         return "";
     }
 }
+
+async function fetchPokemonList() {
+    const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0");
+    const data = await response.json();
+    return data.results.map(pokemon => pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1));
+}
+
 
 /* =============================
         JSON Utility
@@ -484,27 +501,23 @@ function closeCombinationModal() {
 
 async function displayEditableLists() {
     const pcList = document.getElementById("pcList");
-
     pcList.innerHTML = "";
 
-    for (const [index, item] of PC.entries()) {
-        const row = await createEditableRow(item, index, "PC");
-        pcList.appendChild(row);
-    }
+    const rows = await Promise.all(PC.map((item, index) => createEditableRow(item, index, "PC")));
+    pcList.append(...rows);
 }
 
 async function createEditableRow(item, index, setName) {
     const nicknameInput = createInputElement("nickname-input", item.nickname);
-    const nameInput1 = createInputElement("name-input", item.name1);
-    const nameInput2 = createInputElement("name-input", item.name2);
     const areaInput = createInputElement("area-input", item.area);
 
     const typeSelect1 = createTypeSelect(item.type1);
     const typeSelect2 = createTypeSelect(item.type2);
 
+    const nameSelect1 = createSearchableSelect(index, "name1", item.name1);
+    const nameSelect2 = createSearchableSelect(index, "name2", item.name2);
+
     addInputEvents(nicknameInput, index, "nickname", "oninput");
-    addInputEvents(nameInput1, index, "name1", "oninput");
-    addInputEvents(nameInput2, index, "name2", "oninput");
     addInputEvents(areaInput, index, "area", "oninput");
     addInputEvents(typeSelect1, index, "type1", "onchange");
     addInputEvents(typeSelect2, index, "type2", "onchange");
@@ -512,8 +525,8 @@ async function createEditableRow(item, index, setName) {
     const removeBtn = createRemoveButton(index, setName);
 
     const basic = createDivWithClass("basic", nicknameInput, areaInput);
-    const poke1 = createDivWithClass("pc1", nameInput1, typeSelect1);
-    const poke2 = createDivWithClass("pc2", nameInput2, typeSelect2);
+    const poke1 = createDivWithClass("pc1", nameSelect1, typeSelect1);
+    const poke2 = createDivWithClass("pc2", nameSelect2, typeSelect2);
     const team = createDivWithClass("team", poke1, poke2);
 
     const [name1Img, name2Img] = await createPokemonImages(item.name1, item.name2);
@@ -522,6 +535,7 @@ async function createEditableRow(item, index, setName) {
     name1Img.classList.add("name1");
     name2Img.classList.add("name2");
     const display = createDivWithClass("display", name1Img, name2Img);
+    
     const div = document.createElement("div");
     div.classList.add("entry");
     div.appendChild(basic);
@@ -537,6 +551,63 @@ function createInputElement(className, value) {
     input.value = value;
     input.classList.add(className);
     return input;
+}
+
+function createSearchableSelect(index, attr, selectedValue) {
+    const container = document.createElement("div");
+    container.classList.add("searchable-container");
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = selectedValue || "";
+    input.setAttribute("autocomplete", "off");
+
+    const dropdown = document.createElement("div");
+    dropdown.classList.add("searchable-dropdown");
+
+    addSelectEvents(input, dropdown, index, attr);
+
+    container.appendChild(input);
+    container.appendChild(dropdown);
+    return container;
+}
+
+function createSearchableInput(item, dropdown) {
+    item.addEventListener("input", () => {
+        dropdown.innerHTML = "";
+        const searchValue = item.value.toLowerCase();
+        if (!searchValue) {
+            dropdown.style.display = "none";
+            return;
+        }
+        
+        const filteredList = pokemonList.filter(pokemon => pokemon
+            .toLowerCase()
+            .includes(searchValue))
+            .slice(0, 10);
+
+        filteredList.forEach(name => {
+            const option = document.createElement("div");
+            option.textContent = name;
+            option.classList.add("dropdown-item");
+
+            option.onclick = () => {
+                item.value = name;
+                dropdown.style.display = "none";
+            };
+
+            dropdown.appendChild(option);
+        });
+
+        dropdown.style.display = "block"; 
+    });
+
+    item.addEventListener("blur", () => {
+        setTimeout(() => {
+            dropdown.style.display = "none";
+            getPokemonInfo();
+        }, 200);
+    });
 }
 
 function createTypeSelect(selectedType) {
@@ -564,6 +635,40 @@ function addInputEvents(element, index, attr, eventType) {
     element.onblur = (event) => updateData(index, attr, event.target.value);
 }
 
+function addSelectEvents(item, dropdown, index, attr) {
+    item.addEventListener("input", () => {
+        dropdown.innerHTML = "";
+        const searchValue = item.value.toLowerCase();
+        if (!searchValue) {
+            dropdown.style.display = "none";
+            return;
+        }
+        const filteredList = pokemonList.filter(pokemon => pokemon
+            .toLowerCase()
+            .includes(searchValue))
+            .slice(0, 10);
+        filteredList.forEach(name => {
+            const option = document.createElement("div");
+            option.textContent = name;
+            option.classList.add("dropdown-item");
+            option.onclick = () => {
+                item.value = name;
+                dropdown.style.display = "none";
+            };
+            dropdown.appendChild(option);
+        });
+        dropdown.style.display = "block";
+    });
+
+    item.addEventListener("blur", () => {
+        setTimeout(() => {
+            const newValue = item.value;
+            dropdown.style.display = "none";
+            updateData(index, attr, newValue);            
+        }, 200);
+    });
+}
+
 function createRemoveButton(index, setName) {
     const removeBtn = document.createElement("button");
     removeBtn.classList.add("remove-button");
@@ -575,7 +680,7 @@ function createRemoveButton(index, setName) {
 function createDivWithClass(className, ...children) {
     const div = document.createElement("div");
     div.classList.add(className);
-    children.forEach(child => div.appendChild(child));
+    div.append(...children);
     return div;
 }
 

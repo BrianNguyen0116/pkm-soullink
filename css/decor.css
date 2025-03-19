@@ -62,13 +62,13 @@ html {
 }
 
 .Poison {
-    background: #c900a7;
+    background: #ce4bb8;
     outline: 2px #ad00cf solid;
     color: white;
 }
 
 .Ground {
-    background: #ffbb00;
+    background: #d3af4b;
     outline: 2px #b17900 solid;
     color: white;
 }
@@ -80,7 +80,7 @@ html {
 }
 
 .Psychic {
-    background: #ff62f2;
+    background: #fc63ef;
     outline: 2px #ff00d4 solid;
     color: white;
 }
@@ -110,7 +110,7 @@ html {
 }
 
 .Dark {
-    background: #381600;
+    background: #31231a;
     outline: 2px #030200 solid;
     color: white;
 }
