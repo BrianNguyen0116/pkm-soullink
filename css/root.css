@@ -45,10 +45,3 @@ h3 {
     margin: 0;
     pointer-events: none;
 }
-
-@import url(decor.css);
-@import url(editor.css);
-@import url(filter.css);
-@import url(input.css);
-@import url(modal.css);
-@import url(output.css);

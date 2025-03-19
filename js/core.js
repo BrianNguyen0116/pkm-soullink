@@ -484,11 +484,12 @@ function closeCombinationModal() {
 
 async function displayEditableLists() {
     const pcList = document.getElementById("pcList");
+
     pcList.innerHTML = "";
 
     for (const [index, item] of PC.entries()) {
         const row = await createEditableRow(item, index, "PC");
-        pcList.appendChild(row); 
+        pcList.appendChild(row);
     }
 }
 
@@ -501,12 +502,12 @@ async function createEditableRow(item, index, setName) {
     const typeSelect1 = createTypeSelect(item.type1);
     const typeSelect2 = createTypeSelect(item.type2);
 
-    addInputEvents(nicknameInput, "nickname", "oninput");
-    addInputEvents(nameInput1, "name1", "oninput");
-    addInputEvents(nameInput2, "name2", "oninput");
-    addInputEvents(areaInput, "area", "oninput");
-    addInputEvents(typeSelect1, "type1", "onchange");
-    addInputEvents(typeSelect2, "type2", "onchange");
+    addInputEvents(nicknameInput, index, "nickname", "oninput");
+    addInputEvents(nameInput1, index, "name1", "oninput");
+    addInputEvents(nameInput2, index, "name2", "oninput");
+    addInputEvents(areaInput, index, "area", "oninput");
+    addInputEvents(typeSelect1, index, "type1", "onchange");
+    addInputEvents(typeSelect2, index, "type2", "onchange");
 
     const removeBtn = createRemoveButton(index, setName);
 
@@ -518,9 +519,9 @@ async function createEditableRow(item, index, setName) {
     const [name1Img, name2Img] = await createPokemonImages(item.name1, item.name2);
     attachImageClickEvent(name1Img, item.name1);
     attachImageClickEvent(name2Img, item.name2);
-
+    name1Img.classList.add("name1");
+    name2Img.classList.add("name2");
     const display = createDivWithClass("display", name1Img, name2Img);
-
     const div = document.createElement("div");
     div.classList.add("entry");
     div.appendChild(basic);
@@ -554,8 +555,12 @@ function createTypeSelect(selectedType) {
     return select;
 }
 
-function addInputEvents(element, attr, eventType) {
-    element[eventType] = (event) => debouncedUpdateData(index, attr, event.target.value);
+function addInputEvents(element, index, attr, eventType) {
+    element[eventType] = (event) => {
+        const newValue = event.target.value;
+        debouncedUpdateData(index, attr, newValue);
+    };
+
     element.onblur = (event) => updateData(index, attr, event.target.value);
 }
 
@@ -582,17 +587,26 @@ async function createPokemonImages(name1, name2) {
 
 async function createPokemonImage(pokemonName) {
     const img = document.createElement("img");
-    img.classList.add(pokemonName);
-    img.src = await getPokemonImage(pokemonName);
+    try {
+        img.classList.add(pokemonName);
+        img.src = await getPokemonImage(pokemonName);
+    } catch {
+        img.classList.add;
+        img.src = '';
+    }
     img.alt = pokemonName;
     return img;
 }
 
 function attachImageClickEvent(image, pokemonName) {
-    image.addEventListener('click', () => {
-        document.getElementById('pokemonNameInput').value = pokemonName;
-        getPokemonInfo();
-    });
+    try {
+        image.addEventListener('click', () => {
+            document.getElementById('pokemonNameInput').value = pokemonName;
+            getPokemonInfo();
+        });
+    } catch {
+        return '';
+    }
 }
 
 function updateSelectBoxes() {
@@ -605,17 +619,34 @@ function updateSelectBoxes() {
     });
 }
 
-async function updateImages(name, item = "#pcList img") {
-    const img = document.querySelectorAll(`${item}`);
-    
-    for (const item of img) {
-        if (item.alt != name) {
-            item.src = await getPokemonImage(name);
-            item.alt = name;
+async function updateImage(index, attr, newName) {
+    try {
+        const entry = document.querySelectorAll(".entry")[index];
+        if (!entry) {
+            console.warn(`Entry at index ${index} not found.`);
+            return;
         }
+
+        const imageSelector = attr === "name1" ? ".display .name1" : ".display .name2";
+        const image = entry.querySelector(imageSelector);
+
+        if (!image) {
+            console.warn(`Image element for ${attr} not found in entry ${index}.`);
+            return;
+        }
+
+        if (image.alt.trim().toLowerCase() !== newName.trim().toLowerCase()) {
+            const newSrc = await getPokemonImage(newName);
+            if (newSrc && newSrc !== image.src) {
+                image.src = newSrc;
+                image.alt = newName;
+                console.log(`Updated ${attr} image to: ${newSrc}`);
+            }
+        }
+    } catch (error) {
+        console.error(`Error updating image for ${attr} at index ${index}:`, error);
     }
 }
-
 
 function debounce(func, timeout = 300){
     let timer;
@@ -629,10 +660,6 @@ const debouncedUpdateData = debounce((index, key, value) => {
     PC[index][key] = value;
     updateSelectBoxes();
 
-    if (key == "name") {
-        updateImages(value);
-    }
-
     applyJSON();
 }, 300);
 
@@ -640,10 +667,8 @@ function updateData(index, key, value) {
     PC[index][key] = value;
     updateSelectBoxes();
 
-    if (key == "name1") {
-        updateImages(value, ".name1");
-    } else if (key == "name2") {
-        updateImages(value, ".name2");
+    if (key === "name1" || key === "name2") {
+        updateImage(index, key, value);
     }
 
     applyJSON();
