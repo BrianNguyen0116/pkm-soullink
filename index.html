@@ -30,12 +30,12 @@
     }
 ]
                 </textarea>
-                <button onclick="processInput()">Run</button>
+                <button id="process">Run</button>
         
                 <div class="editorButtons">
-                    <button onclick="saveJSON()">Save as JSON</button>
-                    <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="uploadJSON(event)">
-                    <button onclick="document.getElementById('jsonFileInput').click()">Upload JSON</button>
+                    <button id="save">Save as JSON</button>
+                    <input id="file" type="file" id="jsonFileInput" accept=".json" style="display: none;">
+                    <button id="upload">Upload JSON</button>
                 </div>  
             </div>
             <div id="calculator">
@@ -51,7 +51,7 @@
                 <div class="editable-list">
                     <h3>[ PC ]</h3>
                     <div id="pcList"></div>
-                    <button class="row-button" onclick="addRow()">+</button>
+                    <button id="row-button" class="row-button">+</button>
                 </div>
         
             </div>
@@ -67,19 +67,17 @@
     <div class="filter-popup" id="filterPopup">
         <h3>Select Names to Prioritize:</h3>
         <div id="filterOptions"></div>
-        <button onclick="applyFilter()">Apply Filter</button>
-        <button onclick="closeFilterPopup()">Cancel</button>
+        <button id="applyFilter">Apply Filter</button>
+        <button id="closeFilter">Cancel</button>
     </div>
 
     <div id="customAlert" class="modal-overlay">
         <div class="modal-box">
             <p id="modalMessage"></p>
-            <button id="closeModal" onclick="closeModalAlert()">OK</button>
+            <button id="closeModal">OK</button>
         </div>
     </div>
 
 </body>
-
-<script src="js/core.js"></script>
-<script src="js/qol.js"></script>
+<script type="module" src="js/main.js"></script>
 </html>

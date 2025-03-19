@@ -28,13 +28,13 @@ html {
 .Fire {
     background: #ff5050;
     outline: 2px #ff0000 solid;
-    color: white;
+    color: black;
 }
 
 .Water {
     background: #5050ff;
     outline: 2px blue solid;
-    color: white;
+    color: black;
 }
 
 .Electric {
@@ -44,7 +44,7 @@ html {
 }
 
 .Grass {
-    background: #5fe045;
+    background: #75d761;
     outline: 2px #12c901 solid;
     color: black;
 }
@@ -58,31 +58,31 @@ html {
 .Fighting {
     background: #c70000;
     outline: 2px #b40000 solid;
-    color: white;
+    color: black;
 }
 
 .Poison {
     background: #ce4bb8;
     outline: 2px #ad00cf solid;
-    color: white;
+    color: black;
 }
 
 .Ground {
     background: #d3af4b;
     outline: 2px #b17900 solid;
-    color: white;
+    color: black;
 }
 
 .Flying {
     background: #7962ff;
     outline: 2px #6f00ff solid;
-    color: white;
+    color: black;
 }
 
 .Psychic {
-    background: #fc63ef;
+    background: #df88d9;
     outline: 2px #ff00d4 solid;
-    color: white;
+    color: black;
 }
 
 .Bug {
@@ -94,19 +94,19 @@ html {
 .Rock {
     background: #b17900;
     outline: 2px rgb(168, 90, 0) solid;
-    color: white;
+    color: black;
 }
 
 .Ghost {
     background: #6800c9;
     outline: 2px #3f0063 solid;
-    color: white;
+    color: black;
 }
 
 .Dragon {
     background: #b362ff;
     outline: 2px #a200ff solid;
-    color: white;
+    color: black;
 }
 
 .Dark {
@@ -118,11 +118,11 @@ html {
 .Steel {
     background: #a9a9a9;
     outline: 2px #3f3f3f solid;
-    color: white;
+    color: black;
 }
 
 .Fairy {
     background: #da62ff;
     outline: 2px #d400ff solid;
-    color: white;
+    color: black;
 }

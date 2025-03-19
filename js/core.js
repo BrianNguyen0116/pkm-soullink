@@ -1,63 +1,22 @@
-let allCombinations = [];
-let PC = [];
-let pokemonList = []; 
-
-// Massive Poke-dictionary because no-nodejs fun times
-const poketypes = [
-    { type: "Normal", resistantTo: [], weakTo: ["Fighting"], immuneTo: ["Ghost"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/1.png" },
-    { type: "Fire", resistantTo: ["Bug", "Fire", "Grass", "Ice", "Steel", "Fairy"], weakTo: ["Ground", "Rock", "Water"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/10.png" },
-    { type: "Water", resistantTo: ["Fire", "Water", "Ice", "Steel"], weakTo: ["Electric", "Grass"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/11.png" },
-    { type: "Grass", resistantTo: ["Electric", "Ground", "Water"], weakTo: ["Fire", "Ice", "Flying", "Bug", "Poison"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/12.png" },
-    { type: "Electric", resistantTo: ["Flying", "Electric", "Steel"], weakTo: ["Ground"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/13.png" },
-    { type: "Ice", resistantTo: ["Ice"], weakTo: ["Fire", "Fighting", "Rock", "Steel"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/15.png" },
-    { type: "Fighting", resistantTo: ["Bug", "Dark", "Rock"], weakTo: ["Fairy", "Flying", "Psychic"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/2.png" },
-    { type: "Poison", resistantTo: ["Grass", "Fighting", "Poison", "Bug", "Fairy"], weakTo: ["Ground", "Psychic"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/4.png" },
-    { type: "Ground", resistantTo: ["Poison", "Rock"], weakTo: ["Water", "Ice", "Grass"], immuneTo: ["Electric"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/5.png" },
-    { type: "Flying", resistantTo: ["Bug", "Grass", "Fighting"], weakTo: ["Electric", "Ice", "Rock"], immuneTo: ["Ground"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/3.png" },
-    { type: "Psychic", resistantTo: ["Fighting", "Psychic"], weakTo: ["Bug", "Dark", "Ghost"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/14.png" },
-    { type: "Bug", resistantTo: ["Fighting", "Grass", "Ground"], weakTo: ["Fire", "Flying", "Rock"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/7.png" },
-    { type: "Rock", resistantTo: ["Poison", "Fire", "Flying", "Normal"], weakTo: ["Fighting", "Ground", "Steel", "Water", "Grass"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/6.png" },
-    { type: "Ghost", resistantTo: ["Bug", "Ghost"], weakTo: ["Dark", "Ghost"], immuneTo: ["Normal", "Fighting"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/8.png" },
-    { type: "Dragon", resistantTo: ["Fire", "Water", "Grass", "Electric"], weakTo: ["Fairy", "Ice", "Dragon"], immuneTo: [], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/16.png" },
-    { type: "Dark", resistantTo: ["Ghost", "Dark"], weakTo: ["Fighting", "Bug", "Fairy"], immuneTo: ["Psychic"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/17.png" },
-    { type: "Steel", resistantTo: ["Bug", "Dark", "Dragon", "Fairy", "Flying", "Grass", "Ice", "Normal", "Psychic", "Rock", "Steel"], weakTo: ["Fighting", "Fire", "Ground"], immuneTo: ["Poison"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/9.png" },
-    { type: "Fairy", resistantTo: ["Dark", "Dragon", "Fighting"], weakTo: ["Poison", "Steel"], immuneTo: ["Dark"], image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/sword-shield/18.png" }
-];
-
-
-window.onload = async () => {
-    const savedJsonInput = localStorage.getItem('jsonInput');
-
-    if (savedJsonInput) {
-        document.getElementById('jsonInput').value = savedJsonInput;
-    }
-    
-    document.getElementById('jsonInput').addEventListener('input', (e) => {
-        localStorage.setItem('jsonInput', e.target.value);
-    });
-    
-    PC = JSON.parse(savedJsonInput);
-    pokemonList = await fetchPokemonList();
-
-    const pokemonInput = document.getElementById("pokemonNameInput");
-    const dropdown = document.createElement("div");
-    dropdown.classList.add("searchable-dropdown");
-    document.getElementById("calculator").appendChild(dropdown);
-    createSearchableInput(pokemonInput, dropdown, 'pokemon', 'name');
-
-    displayEditableLists();
-}
+import { showModalAlert, closeCombinationModal } from "./qol.js";
+import { showFilterPopup } from "./filter.js";
+import * as element from "./element.js";
+import * as interact from "./element-interact.js";
+import { getPrimaryType, getPokemonList } from "./poke.js";
+import { poketypes } from "./poke-types.js";
+import { setPC, getPC, getCombinations, setCombinations } from "./data.js";
+import { applyJSON } from "./filehandler.js";
 
 /* =============================
         Input Section
 ============================= */
-function processInput() {
+export function processInput() {
     document.getElementById("combinations").innerHTML = "<h3>Valid Combinations:</h3>";
 
     try {
         const jsonData = JSON.parse(document.getElementById("jsonInput").value);
 
-        PC = jsonData;
+        setPC(jsonData);
 
         const req = [
             { key: "name1" },
@@ -66,7 +25,7 @@ function processInput() {
             { key: "type2" }
         ];
 
-        for (const obj of [...PC]) {
+        for (const obj of [...getPC()]) {
 
             const missing = req.filter(attr => !obj[attr.key]);
             if (missing.length) {
@@ -88,213 +47,7 @@ function processInput() {
         return;
     }
 
-    findValidCombinations(PC);
-}
-
-
-/* =============================
-        Poke Util Section 
-============================= */
-
-async function getPokemonInfo() {
-    const pokemonName = document.getElementById('pokemonNameInput').value.toLowerCase();
-    const pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonName}`;
-
-    document.getElementById('pokemonInfo').innerHTML = '';
-
-    try {
-        const response = await fetch(pokemonUrl);
-        const data = await response.json();
-
-        const speciesUrl = data.species.url ? data.species.url : "https://pokeapi.co/api/v2/pokemon-species/${pokemonName}";
-
-        const speciesResponse = await fetch(speciesUrl);
-        const speciesData = await speciesResponse.json();
-        
-        const captureRate = speciesData.capture_rate;
-
-        const types = data.types.map(typeInfo => String(typeInfo.type.name).charAt(0).toUpperCase() + String(typeInfo.type.name).slice(1));
-        const { resistantTo, weakTo, immuneTo } = getStrengthsAndWeaknesses(types);
-
-        const createInfoElement = (id, label, content) => {
-            const div = document.createElement("div");
-            div.id = id;
-            div.innerHTML = `<strong>${label}:</strong> ${content}`;
-            return div;
-        };
-        
-        const pokeName = document.createElement("h3");
-        pokeName.id = "pokemonName";
-        pokeName.innerText = `${pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1)} Info`;
-        
-        const pokeImg = document.createElement("img");
-        pokeImg.src = await getPokemonImage(pokemonName);
-        
-        const pokeTypes = createTypeImageCollection(types, "Types");
-        const pokeCapture = createInfoElement("captureRate", "Capture Rate", `${captureRate}`);
-
-        const pokeResist = createTypeImageCollection(resistantTo, "Resistances");
-        const pokeWeak = createTypeImageCollection(weakTo, "Weaknesses");
-        const pokeImmune = createTypeImageCollection(immuneTo, "Immunities");
-
-        const div = document.createElement("div");
-        div.append(pokeName, pokeImg, pokeCapture, pokeTypes, pokeResist, pokeWeak, pokeImmune);
-        
-        document.getElementById('pokemonInfo').appendChild(div);
-    } catch (error) {
-        showModalAlert('Error fetching Pokémon data. Please try again.');
-    }
-}
-
-function getStrengthsAndWeaknesses(types) {
-    let resistantTo = [];
-    let weakTo = [];
-    let immuneTo = [];
-
-    types.forEach(type => {
-        const typeInfo = poketypes.find(t => t.type === type);
-        if (typeInfo) {
-            resistantTo = [...new Set([...resistantTo, ...typeInfo.resistantTo])];
-            weakTo = [...new Set([...weakTo, ...typeInfo.weakTo])];
-            immuneTo = [...new Set([...immuneTo, ...typeInfo.immuneTo])];
-        }
-    });
-
-    let finalResistTo = [];
-    let finalWeakTo = [];
-
-    resistantTo.forEach(res => {
-        if (weakTo.includes(res)) {
-            weakTo = weakTo.filter(item => item !== res);
-        } else {
-            finalResistTo.push(res);
-        }
-    });
-
-    weakTo.forEach(weak => {
-        if (!resistantTo.includes(weak)) {
-            finalWeakTo.push(weak);
-        }
-    });
-
-    return { resistantTo: finalResistTo, weakTo: finalWeakTo, immuneTo };
-}
-
-
-function createTypeImageCollection (types, label) {
-    const containerDiv = document.createElement("div");
-    containerDiv.classList.add("stats");
-
-    const labelElement = document.createElement("div");
-    labelElement.innerText = label;
-    labelElement.classList.add(label);
-    labelElement.classList.add("label");
-    containerDiv.appendChild(labelElement);
-
-    const imagesDiv = document.createElement("div");
-    imagesDiv.classList.add(`${label}-sub`);
-    imagesDiv.classList.add("collection");
-
-    types.forEach(type => {
-        const typeInfo = poketypes.find(t => t.type === type);
-        if (typeInfo) {
-            const img = document.createElement("img");
-            img.src = typeInfo.image; 
-            img.alt = type;
-            imagesDiv.appendChild(img);
-        }
-    });
-    
-    containerDiv.appendChild(imagesDiv);
-    return containerDiv;
-};
-
-async function getPokemonImage(name) {
-    try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
-        if (!response.ok) throw new Error("Pokemon not found");
-        const data = await response.json();
-        return data.sprites.front_default;
-    } catch (error) {
-        showModalAlert(`Error fetching image for ${name}:`, error);
-        return "";
-    }
-}
-
-async function fetchPokemonList() {
-    const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0");
-    const data = await response.json();
-    return data.results.map(pokemon => pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1));
-}
-
-
-/* =============================
-        JSON Utility
-============================= */
-
-function uploadJSON(event) {
-    const file = event.target.files[0]; 
-
-    if (!file) {
-        showModalAlert("Missing file.");
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const jsonData = JSON.parse(e.target.result); 
-            const jsonString = JSON.stringify(jsonData, null, 4);
-
-            document.getElementById("jsonInput").value = jsonString;
-            localStorage.setItem('jsonInput', jsonString);
-
-            processInput();
-
-        } catch (error) {
-            showModalAlert("Error parsing JSON: " + error.message);
-        }
-    };
-
-    reader.readAsText(file);
-}
-
-async function saveJSON() {
-    if (!PC) {
-        showModalAlert("PC data is required to save the JSON.");
-        return
-    }
-
-    if (!window.showSaveFilePicker) {
-        showModalAlert("Your browser does not support file saving.");
-        return;
-    }
-
-    const jsonString = JSON.stringify(PC, null, 4);
-    const blob = new Blob([jsonString], { type: "application/json" });
-
-    localStorage.setItem('jsonInput', jsonString);
-
-    const handle = await window.showSaveFilePicker({
-        suggestedName: 'soullink-save.json',
-        types: [
-            {
-                description: "JSON",
-                accept: { "application/json": [".json"] },
-            },
-        ],
-    });
-
-    const writableStream = await handle.createWritable();
-
-    await writableStream.write(blob);
-
-    await writableStream.close();
-}
-
-function applyJSON() {
-    document.getElementById("jsonInput").value = JSON.stringify(PC, null, 4);
-    localStorage.setItem('jsonInput',  document.getElementById("jsonInput").value);
+    findValidCombinations(getPC());
 }
 
 
@@ -303,15 +56,14 @@ function applyJSON() {
 ============================= */
 
 function findValidCombinations(PC) {
-    allCombinations = [];
-    findCombinations(0, PC, [], new Set(), allCombinations);
-    allCombinations = removeSubsets(allCombinations);
+    const combinations = [];
+    findCombinations(0, PC, [], new Set(), combinations);
+    setCombinations(combinations);
     showFilterPopup();
 }
 
 function findCombinations(index, PC, chosenPC, usedAttributes, results) {
     if (index === PC.length) {
-        // Push a copy of the chosenPC array if it's not empty
         if (chosenPC.length > 0) {
             results.push([...chosenPC]);
         }
@@ -337,80 +89,16 @@ function findCombinations(index, PC, chosenPC, usedAttributes, results) {
     findCombinations(index + 1, PC, chosenPC, usedAttributes, results);
 }
 
-function removeSubsets(results) {
-    return results.filter((combo, i, allResults) =>
-        !allResults.some((otherCombo, j) =>
-            j !== i &&
-            combo.length < otherCombo.length &&
-            combo.every(obj => otherCombo.some(o => o.nickname === obj.nickname))
-        )
-    );
-}
-
-
-/* =============================
-        Filter Section
-============================= */
-
-function showFilterPopup() {
-    const filterPopup = document.getElementById("filterPopup");
-    const overlay = document.getElementById("overlay");
-    const filterOptions = document.getElementById("filterOptions");
-
-    const filterTable = document.createElement("div");
-    filterTable.classList.add("filter-table");
-
-    filterOptions.innerHTML = "";
-
-    const uniqueNames = [...new Set(allCombinations.flatMap(combo => combo.map(item => item.nickname)))];
-
-    const column1 = document.createElement("div");
-    column1.classList.add("filter-column");
-    const column2 = document.createElement("div");
-    column2.classList.add("filter-column");
-
-    uniqueNames.forEach((nickname, index) => {
-        const label = document.createElement("label");
-        label.innerHTML = `<input type="checkbox" value="${nickname}"> ${nickname}`;
-
-        if (index % 2 === 0) {
-            column1.appendChild(label);
-        } else {
-            column2.appendChild(label);
-        }
-    });
-
-    filterTable.appendChild(column1);
-    filterTable.appendChild(column2);
-    filterOptions.appendChild(filterTable);
-
-    filterPopup.style.display = "block";
-    overlay.style.display = "block";
-}
-
-function applyFilter() {
-    const selectedNames = [...document.querySelectorAll('#filterOptions input:checked')].map(input => input.value);
-    displayCombinations(selectedNames);
-    document.getElementById("filterPopup").style.display = "none";
-    document.getElementById("overlay").style.display = "none";
-}
-
-function closeFilterPopup() {
-    document.getElementById("filterPopup").style.display = "none";
-    document.getElementById("overlay").style.display = "none";
-    document.getElementById("combinations").innerHTML = `<div id="grass"></div>`;
-}
-
 
 /* =============================
         Output Section
 ============================= */
 
-function displayCombinations(selectedNames) {
+export function displayCombinations(selectedNames) {
     const combinationsDiv = document.getElementById("combinations");
     combinationsDiv.innerHTML = "<h3>Valid Combinations:</h3>";
 
-    const filteredCombinations = allCombinations.filter(combo =>
+    const filteredCombinations = getCombinations().filter(combo =>
         selectedNames.every(nickname => combo.some(item => item.nickname === nickname)),
     );
 
@@ -442,10 +130,14 @@ function showCombinationDetails(combo) {
                 <h3>Combination Details</h3>
                 <div id="combinationDetails"></div>
                 <div id="coverageSummary"></div>
-                <button onclick="closeCombinationModal()">Close</button>
+                <button id="closeCombinationModal">Close</button>
             </div>`;
         document.body.appendChild(modal);
     }
+
+    document.getElementById("closeCombinationModal").addEventListener("click", function () {
+        closeCombinationModal();
+    });
 
     const modalContent = document.getElementById("combinationDetails");
     modalContent.classList.add("table-container");
@@ -479,62 +171,46 @@ function showCombinationDetails(combo) {
     modal.style.display = "block";
 }
 
-function countTypeOccurrences(types) {
-    const typeCount = {};
-    types.forEach(type => {
-        typeCount[type] = (typeCount[type] || 0) + 1;
-    });
-
-    return Object.entries(typeCount)
-        .map(([type, count]) => (count > 1 ? `2x ${type}` : type))
-        .join(", ");
-}
-
-function closeCombinationModal() {
-    document.getElementById("combinationModal").style.display = "none";
-}
-
-
 /* =============================
         Form Section 
 ============================= */
 
-async function displayEditableLists() {
+export async function displayEditableLists() {
     const pcList = document.getElementById("pcList");
     pcList.innerHTML = "";
 
-    const rows = await Promise.all(PC.map((item, index) => createEditableRow(item, index, "PC")));
+    const rows = await Promise.all(getPC().map((item, index) => createEditableRow(item, index, "PC")));
     pcList.append(...rows);
 }
 
 async function createEditableRow(item, index, setName) {
-    const nicknameInput = createInputElement("nickname-input", item.nickname);
-    const areaInput = createInputElement("area-input", item.area);
+    const nicknameInput = element.createInputElement("nickname-input", item.nickname);
+    const areaInput = element.createInputElement("area-input", item.area);
 
-    const typeSelect1 = createTypeSelect(item.type1);
-    const typeSelect2 = createTypeSelect(item.type2);
+    const typeSelect1 = element.createTypeSelect(item.type1);
+    const typeSelect2 = element.createTypeSelect(item.type2);    
 
-    const nameSelect1 = createSearchableSelect(index, "name1", item.name1);
-    const nameSelect2 = createSearchableSelect(index, "name2", item.name2);
+    const nameSelect1 = element.createSearchableSelect(await getPokemonList(), index, "name1", item.name1);
+    const nameSelect2 = element.createSearchableSelect(await getPokemonList(), index, "name2", item.name2);
 
-    addInputEvents(nicknameInput, index, "nickname", "oninput");
-    addInputEvents(areaInput, index, "area", "oninput");
-    addInputEvents(typeSelect1, index, "type1", "onchange");
-    addInputEvents(typeSelect2, index, "type2", "onchange");
+    interact.addInputEvents(nicknameInput, index, "nickname", "oninput");
+    interact.addInputEvents(areaInput, index, "area", "oninput");
+    interact.addInputEvents(typeSelect1, index, "type1", "onchange");
+    interact.addInputEvents(typeSelect2, index, "type2", "onchange");
 
-    const removeBtn = createRemoveButton(index, setName);
+    const removeBtn = element.createRemoveButton(index, setName);
 
-    const basic = createDivWithClass("basic", nicknameInput, areaInput);
-    const poke1 = createDivWithClass("pc1", nameSelect1, typeSelect1);
-    const poke2 = createDivWithClass("pc2", nameSelect2, typeSelect2);
-    const team = createDivWithClass("team", poke1, poke2);
+    const basic = element.createDivWithClass("basic", nicknameInput, areaInput);
+    const poke1 = element.createDivWithClass("pc1", nameSelect1, typeSelect1);
+    const poke2 = element.createDivWithClass("pc2", nameSelect2, typeSelect2);
+    const team = element.createDivWithClass("team", poke1, poke2);
 
-    const [name1Img, name2Img] = await createPokemonImages(item.name1, item.name2);
-    attachImageClickEvent(name1Img, item.name1);
-    attachImageClickEvent(name2Img, item.name2);
+    const [name1Img, name2Img] = await element.createPokemonImages(item.name1, item.name2);
+    interact.attachImageClickEvent(name1Img, item.name1);
+    interact.attachImageClickEvent(name2Img, item.name2);
     name1Img.classList.add("name1");
     name2Img.classList.add("name2");
-    const display = createDivWithClass("display", name1Img, name2Img);
+    const display = element.createDivWithClass("display", name1Img, name2Img);
     
     const div = document.createElement("div");
     div.classList.add("entry");
@@ -546,175 +222,7 @@ async function createEditableRow(item, index, setName) {
     return div;
 }
 
-function createInputElement(className, value) {
-    const input = document.createElement("input");
-    input.value = value;
-    input.classList.add(className);
-    return input;
-}
-
-function createSearchableSelect(index, attr, selectedValue) {
-    const container = document.createElement("div");
-    container.classList.add("searchable-container");
-
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = selectedValue || "";
-    input.setAttribute("autocomplete", "off");
-
-    const dropdown = document.createElement("div");
-    dropdown.classList.add("searchable-dropdown");
-
-    addSelectEvents(input, dropdown, index, attr);
-
-    container.appendChild(input);
-    container.appendChild(dropdown);
-    return container;
-}
-
-function createSearchableInput(item, dropdown) {
-    item.addEventListener("input", () => {
-        dropdown.innerHTML = "";
-        const searchValue = item.value.toLowerCase();
-        if (!searchValue) {
-            dropdown.style.display = "none";
-            return;
-        }
-        
-        const filteredList = pokemonList.filter(pokemon => pokemon
-            .toLowerCase()
-            .includes(searchValue))
-            .slice(0, 10);
-
-        filteredList.forEach(name => {
-            const option = document.createElement("div");
-            option.textContent = name;
-            option.classList.add("dropdown-item");
-
-            option.onclick = () => {
-                item.value = name;
-                dropdown.style.display = "none";
-            };
-
-            dropdown.appendChild(option);
-        });
-
-        dropdown.style.display = "block"; 
-    });
-
-    item.addEventListener("blur", () => {
-        setTimeout(() => {
-            dropdown.style.display = "none";
-            getPokemonInfo();
-        }, 200);
-    });
-}
-
-function createTypeSelect(selectedType) {
-    const select = document.createElement("select");
-    select.classList.add(selectedType);
-    poketypes.forEach(pokeType => {
-        const option = document.createElement("option");
-        option.value = pokeType.type;
-        option.textContent = pokeType.type;
-        if (pokeType.type === selectedType) {
-            option.selected = true;
-        }
-        select.appendChild(option);
-    });
-    select.classList.add("type-input");
-    return select;
-}
-
-function addInputEvents(element, index, attr, eventType) {
-    element[eventType] = (event) => {
-        const newValue = event.target.value;
-        debouncedUpdateData(index, attr, newValue);
-    };
-
-    element.onblur = (event) => updateData(index, attr, event.target.value);
-}
-
-function addSelectEvents(item, dropdown, index, attr) {
-    item.addEventListener("input", () => {
-        dropdown.innerHTML = "";
-        const searchValue = item.value.toLowerCase();
-        if (!searchValue) {
-            dropdown.style.display = "none";
-            return;
-        }
-        const filteredList = pokemonList.filter(pokemon => pokemon
-            .toLowerCase()
-            .includes(searchValue))
-            .slice(0, 10);
-        filteredList.forEach(name => {
-            const option = document.createElement("div");
-            option.textContent = name;
-            option.classList.add("dropdown-item");
-            option.onclick = () => {
-                item.value = name;
-                dropdown.style.display = "none";
-            };
-            dropdown.appendChild(option);
-        });
-        dropdown.style.display = "block";
-    });
-
-    item.addEventListener("blur", () => {
-        setTimeout(() => {
-            const newValue = item.value;
-            dropdown.style.display = "none";
-            updateData(index, attr, newValue);            
-        }, 200);
-    });
-}
-
-function createRemoveButton(index, setName) {
-    const removeBtn = document.createElement("button");
-    removeBtn.classList.add("remove-button");
-    removeBtn.textContent = "X";
-    removeBtn.onclick = () => removeRow(index, setName);
-    return removeBtn;
-}
-
-function createDivWithClass(className, ...children) {
-    const div = document.createElement("div");
-    div.classList.add(className);
-    div.append(...children);
-    return div;
-}
-
-async function createPokemonImages(name1, name2) {
-    const name1Img = await createPokemonImage(name1);
-    const name2Img = await createPokemonImage(name2);
-    return [name1Img, name2Img];
-}
-
-async function createPokemonImage(pokemonName) {
-    const img = document.createElement("img");
-    try {
-        img.classList.add(pokemonName);
-        img.src = await getPokemonImage(pokemonName);
-    } catch {
-        img.classList.add;
-        img.src = '';
-    }
-    img.alt = pokemonName;
-    return img;
-}
-
-function attachImageClickEvent(image, pokemonName) {
-    try {
-        image.addEventListener('click', () => {
-            document.getElementById('pokemonNameInput').value = pokemonName;
-            getPokemonInfo();
-        });
-    } catch {
-        return '';
-    }
-}
-
-function updateSelectBoxes() {
+export function updateSelectBoxes() {
     const selectBoxes = document.querySelectorAll("#pcList select");
 
     selectBoxes.forEach(select => {
@@ -724,7 +232,7 @@ function updateSelectBoxes() {
     });
 }
 
-async function updateImage(index, attr, newName) {
+export async function updateImage(index, attr, newName) {
     try {
         const entry = document.querySelectorAll(".entry")[index];
         if (!entry) {
@@ -749,47 +257,39 @@ async function updateImage(index, attr, newName) {
             }
         }
     } catch (error) {
-        console.error(`Error updating image for ${attr} at index ${index}:`, error);
+        showModalAlert(`Error updating image for ${attr} at index ${index}:`, error);
     }
 }
 
-function debounce(func, timeout = 300){
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => { func.apply(this, args); }, timeout);
+export async function addRow() {
+    const pokemonList = await getPokemonList();
+    const pokemon1 = pokemonList[Math.floor(Math.random() * 1303)];
+    const pokemon2 = pokemonList[Math.floor(Math.random() * 1303)];
+
+    const newRow = { 
+        nickname: "", 
+        name1: pokemon1, 
+        name2: pokemon2, 
+        area: "", 
+        type1: await getPrimaryType(pokemon1), 
+        type2: await getPrimaryType(pokemon2) 
     };
-}
 
-const debouncedUpdateData = debounce((index, key, value) => {
-    PC[index][key] = value;
-    updateSelectBoxes();
-
-    applyJSON();
-}, 300);
-
-function updateData(index, key, value) {
-    PC[index][key] = value;
-    updateSelectBoxes();
-
-    if (key === "name1" || key === "name2") {
-        updateImage(index, key, value);
-    }
+    let temp = getPC();
+    temp.push(newRow);
+    setPC(temp);
 
     applyJSON();
-}
-
-function addRow() {
-    const newRow = { nickname: "", name1: "", name2: "", area: "", type1: poketypes[0].type, type2: poketypes[0].type };
-
-    PC.push(newRow);
-
     displayEditableLists();
 }
 
-function removeRow(index) {
-    if (PC.length > 1) {
-        PC.splice(index, 1);
+export function removeRow(index) {
+    let temp = getPC();
+
+    if (temp.length > 1) {
+        temp.splice(index, 1);
+        setPC(temp);
+        applyJSON();
         displayEditableLists();
     } else {
         showModalAlert("You must have at least one row.");

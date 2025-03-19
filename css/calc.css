@@ -36,6 +36,7 @@
 
 .collection {
     padding: 5px;
+    min-height: 22px;
 }
 
 .collection img {
