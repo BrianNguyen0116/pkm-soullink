@@ -1,8 +1,10 @@
 /* =============================
         PC Section
 ============================= */
-import { updateSelectBoxes, updateImage } from "./core.js";
+import { updateSelectBoxes, updateImage, displayEditableLists } from "./core.js";
 import { showModalAlert } from "./qol.js";
+import { getPrimaryType } from "./poke.js";
+import { applyJSON } from "./filehandler.js";
 
 let PC = [];
 let allCombinations = [];

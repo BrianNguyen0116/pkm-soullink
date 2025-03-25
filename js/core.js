@@ -2,7 +2,7 @@ import { showModalAlert, closeCombinationModal } from "./qol.js";
 import { showFilterPopup } from "./filter.js";
 import * as element from "./element.js";
 import * as interact from "./element-interact.js";
-import { getPrimaryType, getPokemonList } from "./poke.js";
+import { getPrimaryType, getPokemonList, getPokemonImage } from "./poke.js";
 import { poketypes } from "./poke-types.js";
 import { setPC, getPC, getCombinations, setCombinations } from "./data.js";
 import { applyJSON } from "./filehandler.js";
