@@ -1,7 +1,7 @@
 import { processInput, addRow, displayEditableLists } from "./core.js";
 import { setPC } from "./data.js";
 import { applyFilter, closeFilterPopup } from "./filter.js";
-import { closeModalAlert, closeCombinationModal, insertTabCharacter } from "./qol.js";
+import { closeModalAlert, closeCombinationModal, insertTabCharacter, showModalAlert } from "./qol.js";
 import { addSearchEvent } from "./element-interact.js";
 import { getPokemonList } from "./poke.js";
 import { saveJSON, uploadJSON } from "./filehandler.js";
@@ -21,15 +21,6 @@ window.onload = async () => {
         calculator: document.getElementById("calculator"),
     };
 
-    const savedJsonInput = localStorage.getItem("jsonInput");
-    if (savedJsonInput) {
-        elements.jsonInput.value = savedJsonInput;
-        setPC(JSON.parse(savedJsonInput));
-    } else {
-        localStorage.setItem("jsonInput", elements.jsonInput.value);
-        setPC(JSON.parse(elements.jsonInput.value));
-    }
-
     const eventMap = [
         { element: elements.jsonInput, event: "input", handler: (e) => localStorage.setItem("jsonInput", e.target.value) },
         { element: elements.saveBtn, event: "click", handler: async () => await saveJSON() },
@@ -41,6 +32,21 @@ window.onload = async () => {
         { element: elements.rowButton, event: "click", handler: async () => await addRow() },
         { element: elements.closeModalBtn, event: "click", handler: closeModalAlert },
     ];
+
+    ;
+
+    try {
+        const savedJsonInput = localStorage.getItem("jsonInput");
+        if (savedJsonInput) {
+            elements.jsonInput.value = savedJsonInput;
+            setPC(JSON.parse(savedJsonInput));
+        } else {
+            localStorage.setItem("jsonInput", elements.jsonInput.value);
+            setPC(JSON.parse(elements.jsonInput.value));
+        }
+    } catch (error) {
+        showModalAlert("Error reading JSON data.", error);
+    }
 
     eventMap.forEach(({ element, event, handler }) => {
         if (element) element.addEventListener(event, handler);
