@@ -13,13 +13,16 @@
 body {
     font: 1.2em "Arial", sans-serif;
     text-align: center;
-    padding: 20px;
+    margin: 0;
 }
 
 .wrapper {
     display: flex;
     width: 100%;
     gap: 20px;
+    min-height: calc(100dvh);
+    padding: 20px;
+    margin: 5px;
 }
 
 .column {

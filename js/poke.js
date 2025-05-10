@@ -1,7 +1,6 @@
 /* =============================
         Poke Util Section 
 ============================= */
-import { showModalAlert } from "./qol.js";
 import { getStrengthsAndWeaknesses } from "./poke-types.js"
 import { createTypeImageCollection } from "./element.js";
 
@@ -24,8 +23,19 @@ export async function getPokemonInfo() {
         
         const captureRate = speciesData.capture_rate;
 
+        const ability = await getPokemonAbility(pokemonName);
+
         const types = data.types.map(typeInfo => String(typeInfo.type.name).charAt(0).toUpperCase() + String(typeInfo.type.name).slice(1));
         const { resistantTo, weakTo, immuneTo } = getStrengthsAndWeaknesses(types);
+
+        if (ability == "levitate") {
+            if (weakTo.includes("Ground"), 1)
+                weakTo.splice(weakTo.indexOf("Ground"));
+            if (resistantTo.includes("Ground"))
+                resistantTo.splice(weakTo.indexOf("Ground"), 1);
+            if (!immuneTo.includes("Ground"))
+                immuneTo.push("Ground");
+        }
 
         const createInfoElement = (id, label, content) => {
             const div = document.createElement("div");
@@ -53,20 +63,18 @@ export async function getPokemonInfo() {
         
         document.getElementById('pokemonInfo').appendChild(div);
     } catch (error) {
-        showModalAlert('Error fetching Pokémon data. Please try again.', error);
+        console.log('Error fetching Pokémon data. Please try again.', error);
     }
 }
 
 export async function getPrimaryType(name) {
-    const pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${name}`;
-
     try {
-        const response = await fetch(pokemonUrl);
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
         const data = await response.json();
         const type = String(data.types[0].type.name);
         return type.charAt(0).toUpperCase() + String(type).slice(1);
     } catch (error) {
-        showModalAlert('Error fetching Pokémon data. Please try again.', error);
+        console.log('Error fetching Pokémon data. Please try again.', error);
     }
 }
 
@@ -77,8 +85,18 @@ export async function getPokemonImage(name) {
         const data = await response.json();
         return data.sprites.front_default;
     } catch (error) {
-        showModalAlert(`Error fetching image for ${name}:`, error);
-        return "";
+        console.log(`Error fetching image for ${name}:`, error);
+    }
+}
+
+export async function getPokemonAbility(name) {
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
+        if (!response.ok) throw new Error("Pokemon not found");
+        const data = await response.json();
+        return data.abilities[0].ability.name;
+    } catch (error) {
+        console.log(`Error fetching ability for ${name}:`, error);
     }
 }
 

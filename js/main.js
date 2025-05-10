@@ -53,7 +53,7 @@ window.onload = async () => {
     });
 
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
+        if (e.key === "Escape" || e.key === "Enter" ) {
             if (document.getElementById("customAlert").style.display === "block") {
                 closeModalAlert();
             } else if (document.getElementById("combinationModal").style.display === "block") {
